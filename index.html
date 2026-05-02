@@ -696,7 +696,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
         <span class="sn-item-label">Buyers</span>
       </div>
       <div class="sn-item" id="tab-titlecos" data-label="Title Companies" onclick="sv('titlecos')">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2" width="18" height="20" rx="2"/><rect x="7" y="6" width="3" height="3" rx="0.5"/><rect x="14" y="6" width="3" height="3" rx="0.5"/><rect x="7" y="12" width="3" height="3" rx="0.5"/><rect x="14" y="12" width="3" height="3" rx="0.5"/><rect x="7" y="18" width="3" height="3" rx="0.5"/><rect x="14" y="18" width="3" height="3" rx="0.5"/></svg>
         <span class="sn-item-label">Title Companies</span>
       </div>
       <div class="sn-item" id="tab-heatmap" data-label="Market Map" onclick="sv('heatmap')">
@@ -1123,7 +1123,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
   <div class="bm2">
     <div class="bmh2">
       <div>
-        <div style="display:flex;align-items:center;gap:12px"><span class="bmn2" id="tcbname"></span></div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span class="bmn2" id="tcbname"></span><span id="tcbbadge" class="bmpb2"></span></div>
         <div class="bms2" id="tcbsub"></div>
       </div>
       <div class="bmhb2">
@@ -1631,7 +1631,7 @@ function sv(v){
   if(sn){ if(v==='dashboard') sn.classList.remove('collapsed'); else sn.classList.add('collapsed'); }
   const btn=document.getElementById('top-new-btn');
   if(v==='buyers'||v==='titlecos'){
-    btn.innerHTML='<svg viewBox="0 0 16 16"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg> Add '+(v==='titlecos'?'Title Co':'Buyer');
+    btn.innerHTML='<svg viewBox="0 0 16 16"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg> Add '+(v==='titlecos'?'Title Company':'Buyer');
     btn.onclick=v==='titlecos'?openNTC:openNB;
   } else if(v==='heatmap'){
     btn.innerHTML='<svg viewBox="0 0 16 16"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg> Add Buyer';
@@ -1658,7 +1658,7 @@ function trigSBD(id){const b=buyers.find(x=>x.id===id);pd={t:'buyers',ids:[id]};
 function showDel(t,m){document.getElementById('delt').textContent=t;document.getElementById('delm').innerHTML=m;document.getElementById('delin').value='';document.getElementById('delin').classList.remove('vl');document.getElementById('delcf').classList.remove('rd');document.getElementById('delover').style.display='flex';setTimeout(()=>document.getElementById('delin').focus(),100);}
 function chkDel(){const v=document.getElementById('delin').value,rd=v==='DELETE';document.getElementById('delcf').classList.toggle('rd',rd);document.getElementById('delin').classList.toggle('vl',rd);}
 function cancelDel(){saveToStorage();document.getElementById('delover').style.display='none';pd={t:null,ids:[]};}
-function execDel(){if(!document.getElementById('delcf').classList.contains('rd'))return;_playTrash();if(pd.t==='leads'){leads=leads.filter(l=>!pd.ids.includes(l.id));pd.ids.forEach(id=>selL.delete(id));renderSellers();updBulk();}else if(pd.t==='titlecos'){titleCos=titleCos.filter(t=>!pd.ids.includes(t.id));if(document.getElementById('tcbmodal')?.style.display!=='none')closeTCB();renderTitleCos();}else if(pd.t==='buyers'){buyers=buyers.filter(b=>!pd.ids.includes(b.id));pd.ids.forEach(id=>selB.delete(id));renderBuyers();}document.getElementById('delover').style.display='none';pd={t:null,ids:[]};saveToStorage();}
+function execDel(){if(!document.getElementById('delcf').classList.contains('rd'))return;_playTrash();if(pd.t==='leads'){leads=leads.filter(l=>!pd.ids.includes(l.id));pd.ids.forEach(id=>selL.delete(id));renderSellers();updBulk();}else if(pd.t==='titlecos'){titleCos=titleCos.filter(t=>!pd.ids.includes(t.id));pd.ids.forEach(id=>selTC.delete(id));if(document.getElementById('tcbmodal')?.style.display!=='none')closeTCB();renderTitleCos();}else if(pd.t==='buyers'){buyers=buyers.filter(b=>!pd.ids.includes(b.id));pd.ids.forEach(id=>selB.delete(id));renderBuyers();}document.getElementById('delover').style.display='none';pd={t:null,ids:[]};saveToStorage();}
 
 /* ══ SELLER LEADS ══ */
 function setSearch(v){sq=v.toLowerCase();renderPipe();}
@@ -2236,123 +2236,187 @@ function setBuyerMode(mode){buyerListMode=mode;bsq='';bst2='';bcty='';bcit='';bP
 let titleCos=[];
 let ntcid=1;
 let tcbq='',tcPage=1;
-const TC_PER_PAGE=24;
+let tcst='',tccty='',tccit='';
+const TC_PER_PAGE=50;
 let etcid=null,tcbem=false;
+let selTC=new Set();
 
 function filtTC(){
   return titleCos.filter(t=>{
     const q=(tcbq||'').toLowerCase();
-    if(q&&!(t.name||'').toLowerCase().includes(q)&&!(t.contact||'').toLowerCase().includes(q)&&!(t.email||'').toLowerCase().includes(q))return false;
+    if(q&&!(t.name||'').toLowerCase().includes(q)&&!(t.contact||'').toLowerCase().includes(q)&&!(t.email||'').toLowerCase().includes(q)&&!(t.city||'').toLowerCase().includes(q)&&!(t.state||'').toLowerCase().includes(q))return false;
+    if(tcst&&!(t.state||'').split(',').map(s=>s.trim()).includes(tcst))return false;
+    if(tccty&&!(t.county||'').split(',').map(c=>c.trim()).includes(tccty))return false;
+    if(tccit&&!(t.city||'').split(',').map(c=>c.trim()).includes(tccit))return false;
     return true;
   }).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
 }
+function setTCst(v){tcst=v;tcPage=1;setTimeout(renderTitleCos,0);}
+function setTCcty(v){tccty=v;tcPage=1;setTimeout(renderTitleCos,0);}
+function setTCcit(v){tccit=v;tcPage=1;setTimeout(renderTitleCos,0);}
+function clearAllTCFilters(){tcst='';tccty='';tccit='';tcPage=1;renderTitleCos();}
+
+function buildTCRows(list){
+  if(!list||!list.length)return'';
+  let rows='';
+  list.forEach(t=>{
+    const isSel=selTC.has(t.id);
+    rows+=`<div class="brow2 ${isSel?'sel':''}" id="tcr-${t.id}"><div class="bri2"><div style="flex-shrink:0;margin-right:4px"><div class="ckb ${isSel?'on':''}" id="tccb-${t.id}" onclick="togTCS(${t.id})"></div></div><div class="brl2"><div class="bnr2"><span class="bn2">${esc(t.name||'Unnamed')}</span></div><div class="bcn2"><svg viewBox="0 0 16 16" width="13" height="13"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg>${esc(t.contact||'—')}</div><div style="display:flex;gap:10px;flex-direction:column;margin-top:6px">${t.email?`<div class="mi"><svg viewBox="0 0 16 16"><rect x="2" y="4" width="12" height="9" rx="1"/><path d="M2 7l6 4 6-4"/></svg>${esc(t.email)}</div>`:''}${t.phone?`<div class="mi"><svg viewBox="0 0 16 16"><path d="M3 2h3l1.5 3.5-2 1.5a8 8 0 003.5 3.5l1.5-2L14 10v3a1 1 0 01-1 1C6 14 2 10 2 3a1 1 0 011-1z"/></svg>${esc(t.phone)}</div>`:''}${t.website?`<div class="mi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c-2 2-3 4-3 6s1 4 3 6M8 2c2 2 3 4 3 6s-1 4-3 6"/></svg>${esc(t.website)}</div>`:''}</div></div><div class="brr2"><div class="ll2">Location</div><div class="lco2" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">${(t.city||'').split(',').map(c=>c.trim()).filter(Boolean).map(c=>`<span class="zt2">${esc(c)}</span>`).join('')}${(t.state||'').split(',').map(s=>s.trim()).filter(Boolean).map(s=>`<span class="zt2" style="border-color:#C9A84C44;color:#C9A84C">${esc(s)}</span>`).join('')}</div><div class="lco2" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">${(t.county||'').split(',').map(c=>c.trim()).filter(Boolean).map(c=>`<span class="zt2">${esc(c)}</span>`).join('')}</div></div><div class="bra2"><button class="eib" onclick="openTC(${t.id})">${EYE}</button><button class="tib" onclick="trigTCD(${t.id})">${TRASH}</button></div></div></div>`;
+  });
+  return rows;
+}
+
+function togTCS(id){selTC.has(id)?selTC.delete(id):selTC.add(id);const el=document.getElementById('tcr-'+id),cb=document.getElementById('tccb-'+id);if(el)el.classList.toggle('sel',selTC.has(id));if(cb)cb.classList.toggle('on',selTC.has(id));const bar=document.getElementById('tcbulkb');const cnt=document.getElementById('tcbulkc');if(bar)bar.className='bbulk2'+(selTC.size>0?' on':'');if(cnt)cnt.textContent=selTC.size+' selected';}
 
 function renderTitleCos(){
-  const el=document.getElementById('titlecoscontent');
-  if(!el)return;
-  const all=filtTC();
-  const total=all.length;
-  const pages=Math.max(1,Math.ceil(total/TC_PER_PAGE));
-  tcPage=Math.min(tcPage,pages);
-  const slice=all.slice((tcPage-1)*TC_PER_PAGE,tcPage*TC_PER_PAGE);
-
-  let html=`<div style="padding:22px 24px 16px;border-bottom:1px solid var(--br);background:var(--bg1)">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-      <div style="flex:1;min-width:200px;position:relative">
-        <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.5" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6.5" cy="6.5" r="4"/><path d="M11 11l3 3"/></svg>
-        <input type="text" placeholder="Search title companies..." value="${esc(tcbq)}" oninput="tcbq=this.value;tcPage=1;renderTitleCos()" style="width:100%;background:var(--bg2);border:1px solid var(--br);border-radius:8px;padding:9px 12px 9px 34px;font-size:13px;color:var(--t1);font-family:inherit;outline:none" onfocus="this.style.borderColor='#C9A84C'" onblur="this.style.borderColor='var(--br)'">
-      </div>
+  tcPage=1;
+  const fl=filtTC();
+  const allS=[...new Set(titleCos.flatMap(t=>(t.state||'').split(',').map(s=>s.trim()).filter(Boolean)))];
+  const allCo=[...new Set(titleCos.flatMap(t=>(t.county||'').split(',').map(c=>c.trim()).filter(Boolean)))];
+  const allCi=[...new Set(titleCos.flatMap(t=>(t.city||'').split(',').map(c=>c.trim()).filter(Boolean)))];
+  const tcvis=selTC.size>0;
+  const visible=fl.slice(0,50);
+  const hasMore=fl.length>50;
+  let rows=buildTCRows(visible);
+  if(!rows)rows=`<div style="text-align:center;padding:56px;color:var(--t3);font-size:14px">No title companies found</div>`;
+  const paginationBtn=hasMore?`<div style="display:flex;justify-content:center;padding:28px 0 20px"><button class="buyer-more-btn" id="tc-more-btn" onclick="loadMoreTCs()">View ${Math.min(50,fl.length-50)} more</button></div>`:'';
+  document.getElementById('titlecoscontent').innerHTML=`
+    <div style="padding:22px 24px 16px;border-bottom:1px solid var(--br);background:var(--bg1)"><h1 style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><rect x="3" y="2" width="18" height="20" rx="2"/><rect x="7" y="6" width="3" height="3" rx="0.5"/><rect x="14" y="6" width="3" height="3" rx="0.5"/><rect x="7" y="12" width="3" height="3" rx="0.5"/><rect x="14" y="12" width="3" height="3" rx="0.5"/><rect x="7" y="18" width="3" height="3" rx="0.5"/><rect x="14" y="18" width="3" height="3" rx="0.5"/></svg>Title Company Management</h1><p style="font-size:13px;color:var(--t3)">Manage your title company contacts and relationships</p></div>
+    <div class="bst2">
+      <div class="bsc2"><div class="bsi2"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div><div class="bsv2">${titleCos.length}</div><div class="bsl2">Total Companies</div></div></div>
+      <div class="bsc2"><div class="bsi2"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z"/></svg></div><div><div class="bsv2">${allS.length}</div><div class="bsl2">Total States</div></div></div>
+      <div class="bsc2"><div class="bsi2"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1"/><path d="M5 13V3M11 13V3"/></svg></div><div><div class="bsv2">${allCo.length}</div><div class="bsl2">Total Counties</div></div></div>
+      <div class="bsc2"><div class="bsi2"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></div><div><div class="bsv2">${allCi.length}</div><div class="bsl2">Total Cities</div></div></div>
     </div>
-    <h1 style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:10px">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      Title Company Management
-    </h1>
-    <p style="font-size:13px;color:var(--t3)">Manage your title company contacts and relationships</p>
-  </div>`;
-
-  if(!slice.length){
-    html+=`<div style="text-align:center;padding:60px 20px;color:var(--t3)"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="margin:0 auto 16px;display:block;opacity:.3"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div style="font-size:15px;margin-bottom:8px">No title companies yet</div><div style="font-size:13px">Click "+ Add Title Co" to add your first</div></div>`;
-  } else {
-    html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;padding:18px 24px">`;
-    slice.forEach(t=>{
-      html+=`<div id="tcr-${t.id}" style="background:var(--bg2);border:1px solid var(--br);border-radius:12px;padding:18px;cursor:pointer;transition:border-color .18s,transform .18s,box-shadow .18s;position:relative" onclick="openTC(${t.id})" onmouseover="this.style.borderColor='#C9A84C';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 22px rgba(201,168,76,.18)'" onmouseout="this.style.borderColor='var(--br)';this.style.transform='';this.style.boxShadow=''">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
-          <div style="display:flex;align-items:center;gap:10px">
-            <div style="width:38px;height:38px;border-radius:9px;background:#3d2e10;border:1.5px solid #C9A84C;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#E8C97A;flex-shrink:0">${esc((t.name||'?')[0].toUpperCase())}</div>
-            <div>
-              <div style="font-size:14px;font-weight:700;color:var(--t1)">${esc(t.name||'Unnamed')}</div>
-              ${t.city||t.state?`<div style="font-size:11px;color:var(--t3);margin-top:1px">${[t.city,t.state].filter(Boolean).join(', ')}</div>`:''}
-            </div>
-          </div>
-        </div>
-        ${t.contact?`<div style="font-size:12px;color:var(--t2);margin-bottom:4px;display:flex;align-items:center;gap:6px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${esc(t.contact)}</div>`:''}
-        ${t.email?`<div style="font-size:12px;color:var(--t2);margin-bottom:4px;display:flex;align-items:center;gap:6px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>${esc(t.email)}</div>`:''}
-        ${t.phone?`<div style="font-size:12px;color:var(--t2);display:flex;align-items:center;gap:6px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .22h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>${esc(t.phone)}</div>`:''}
-        <button onclick="event.stopPropagation();trigTCD(${t.id})" style="position:absolute;bottom:12px;right:12px;background:transparent;border:none;cursor:pointer;color:var(--t3);padding:4px;border-radius:5px;transition:color .12s" onmouseover="this.style.color='#E24B4A'" onmouseout="this.style.color='var(--t3)'"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5h10M6 5V3h4v2M5 5l1 9h4l1-9"/></svg></button>
-      </div>`;
-    });
-    html+=`</div>`;
-    // Pagination
-    if(pages>1){
-      html+=`<div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:16px">`;
-      for(let i=1;i<=pages;i++){
-        html+=`<button onclick="tcPage=${i};renderTitleCos()" style="width:30px;height:30px;border-radius:6px;border:1px solid ${i===tcPage?'#C9A84C':'var(--br)'};background:${i===tcPage?'#C9A84C':'transparent'};color:${i===tcPage?'#111':'var(--t2)'};cursor:pointer;font-size:12px;font-weight:${i===tcPage?'700':'400'}">${i}</button>`;
-      }
-      html+=`</div>`;
-    }
-  }
-  el.innerHTML=html;
+    <div class="bsb2"><div class="bsbw2"><svg class="bic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6.5" cy="6.5" r="4"/><path d="M11 11l3 3"/></svg><input type="text" placeholder="Search title companies..." value="${esc(tcbq)}" id="tc-search-input" oninput="tcbq=this.value;tcPage=1;renderTCList()"></div></div>
+    <div class="blb2">${buildCustomDd('tcst','\u2713 State',allS,tcst,'setTCst')}${buildCustomDd('tccty','County',allCo,tccty,'setTCcty')}${buildCustomDd('tccit','City',allCi,tccit,'setTCcit')}</div>
+    ${buildFilterPillsTC(tcst,tccty,tccit)}
+    <div class="bbulk2 ${tcvis?'on':''}" id="tcbulkb"><span class="bbc" id="tcbulkc">${selTC.size} selected</span><button class="bbd" onclick="trigBulkDelTC()">${TRASH} Delete Selected</button></div>
+    <div class="bcnt2" id="tc-count-inner">${fl.length} compan${fl.length!==1?'ies':'y'}</div>
+    <div class="blist2" id="tc-list-inner"><div class="lw">${rows}</div></div>${paginationBtn}`;
+  setTimeout(_restoreTCHasVal,0);
 }
+
+function buildFilterPillsTC(st,cty,cit){
+  const pills=[];
+  if(st)pills.push(`<span class="fltr-pill">${esc(st)}<button class="fltr-pill-x" onclick="setTCst('')">✕</button></span>`);
+  if(cty)pills.push(`<span class="fltr-pill">${esc(cty)}<button class="fltr-pill-x" onclick="setTCcty('')">✕</button></span>`);
+  if(cit)pills.push(`<span class="fltr-pill">${esc(cit)}<button class="fltr-pill-x" onclick="setTCcit('')">✕</button></span>`);
+  if(!pills.length)return'';
+  return`<div style="display:flex;align-items:center;gap:8px;padding:8px 24px;flex-wrap:wrap;border-bottom:1px solid var(--br)">${pills.join('')}<button class="fltr-clear" onclick="clearAllTCFilters()">Clear all</button></div>`;
+}
+
+function _restoreTCHasVal(){
+  if(tcst){const w=document.getElementById('cdd-tcst');if(w)w.classList.add('has-val');}
+  if(tccty){const w=document.getElementById('cdd-tccty');if(w)w.classList.add('has-val');}
+  if(tccit){const w=document.getElementById('cdd-tccit');if(w)w.classList.add('has-val');}
+}
+
+function renderTCList(){
+  tcPage=1;
+  const fl=filtTC();
+  const listEl=document.getElementById('tc-list-inner');
+  const cntEl=document.getElementById('tc-count-inner');
+  if(!listEl)return;
+  if(cntEl)cntEl.textContent=fl.length+' compan'+(fl.length!==1?'ies':'y');
+  const visible=fl.slice(0,50);
+  const hasMore=fl.length>50;
+  listEl.innerHTML=`<div class="lw">${buildTCRows(visible)||`<div style="text-align:center;padding:56px;color:var(--t3);font-size:14px">No title companies found</div>`}</div>`;
+  let existBtn=document.getElementById('tc-more-btn');
+  if(hasMore){
+    if(!existBtn){const div=document.createElement('div');div.style.cssText='display:flex;justify-content:center;padding:28px 0 20px';div.innerHTML=`<button class="buyer-more-btn" id="tc-more-btn" onclick="loadMoreTCs()">View ${Math.min(50,fl.length-50)} more</button>`;listEl.parentElement.appendChild(div);}
+    else{existBtn.textContent='View '+Math.min(50,fl.length-50)+' more';}
+  } else {if(existBtn)existBtn.parentElement.remove();}
+}
+
+function loadMoreTCs(){
+  tcPage++;
+  const fl=filtTC();
+  const visible=fl.slice(0,tcPage*50);
+  const hasMore=fl.length>tcPage*50;
+  const listEl=document.getElementById('tc-list-inner');
+  if(listEl)listEl.innerHTML=`<div class="lw">${buildTCRows(visible)||`<div style="text-align:center;padding:56px;color:var(--t3);font-size:14px">No title companies found</div>`}</div>`;
+  const btn=document.getElementById('tc-more-btn');
+  if(btn){if(hasMore){const remaining=fl.length-tcPage*50;btn.textContent='View '+Math.min(50,remaining)+' more';}else btn.parentElement.remove();}
+}
+
+function trigBulkDelTC(){const ids=[...selTC];pd={t:'titlecos',ids};showDel(`Delete ${ids.length} compan${ids.length!==1?'ies':'y'}?`,`Permanently remove <span class="dc2">${ids.length}</span> record${ids.length!==1?'s':''}. Cannot be undone.`);}
 
 function openTC(id){
   _playTick();
   const t=titleCos.find(x=>x.id===id);
   if(!t)return;
   etcid=id;tcbem=false;
-  document.getElementById('tcbname').textContent=t.name||'Title Company';
-  document.getElementById('tcbsub').textContent=t.contact||'';
-  document.getElementById('tcbedit').innerHTML='<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg> Edit';
+  document.getElementById('tcbname').textContent=t.name||'';
+  document.getElementById('tcbbadge').textContent=t.city||t.state?[t.city,t.state].filter(Boolean).join(', '):'';
+  document.getElementById('tcbsub').textContent=t.name||'';
+  document.getElementById('tcbedit').innerHTML=`<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg> Edit`;
   document.getElementById('tcbfoo').style.display='none';
   renderTCM(t,false);
   document.getElementById('tcbmodal').style.display='flex';
 }
 
-function renderTCM(t,edit){
-  const el=document.getElementById('tcbmbody');
-  if(!el)return;
-  if(edit){
-    el.innerHTML=`<div style="padding:20px;display:flex;flex-direction:column;gap:14px">
-      <div><label class="bel2">Company Name</label><input class="bei2" id="tce-name" value="${esc(t.name||'')}"></div>
-      <div><label class="bel2">Contact Name</label><input class="bei2" id="tce-contact" value="${esc(t.contact||'')}"></div>
-      <div><label class="bel2">Email</label><input class="bei2" type="email" id="tce-email" value="${esc(t.email||'')}"></div>
-      <div><label class="bel2">Phone</label><input class="bei2" type="tel" id="tce-phone" value="${esc(t.phone||'')}" oninput="this.value=fp(this.value)"></div>
-      <div><label class="bel2">Address</label><input class="bei2" id="tce-address" value="${esc(t.address||'')}"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div><label class="bel2">City</label><input class="bei2" id="tce-city" value="${esc(t.city||'')}"></div>
-        <div><label class="bel2">State</label><input class="bei2" id="tce-state" value="${esc(t.state||'')}"></div>
+function renderTCM(t,em){
+  if(!em){document.getElementById('tcbmbody').innerHTML=`
+<div style="padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+  <div class="bmsec2">
+    <div class="bmsc2-grid">
+      <div class="bmsc2">
+        <div class="bmst2"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg>Contact Information</div>
+        <div class="bmf2"><svg viewBox="0 0 16 16"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg><span class="fv2">${esc(t.contact||'—')}</span></div>
+        ${t.email?`<div class="bmf2"><svg viewBox="0 0 16 16"><rect x="2" y="4" width="12" height="9" rx="1"/><path d="M2 7l6 4 6-4"/></svg><a href="mailto:${esc(t.email)}" class="fv2 bm-email-link">${esc(t.email)}</a></div>`:''}
+        ${t.phone?`<div class="bmf2"><svg viewBox="0 0 16 16"><path d="M3 2h3l1.5 3.5-2 1.5a8 8 0 003.5 3.5l1.5-2L14 10v3a1 1 0 01-1 1C6 14 2 10 2 3a1 1 0 011-1z"/></svg><span class="fv2">${esc(t.phone)}</span></div>`:''}
+        ${t.website?`<div class="bmf2"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c-2 2-3 4-3 6s1 4 3 6M8 2c2 2 3 4 3 6s-1 4-3 6"/></svg><a href="${esc(t.website)}" target="_blank" class="fv2 bm-email-link">${esc(t.website)}</a></div>`:''}
       </div>
-      <div><label class="bel2">Website</label><input class="bei2" id="tce-website" value="${esc(t.website||'')}"></div>
-      <div><label class="bel2">Notes</label><textarea class="bet2" id="tce-notes" rows="4">${esc(t.notes||'')}</textarea></div>
-    </div>`;
-  } else {
-    const row=(label,val,icon)=>val?`<div class="bmf2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="1.6">${icon}</svg><div><span style="font-size:11px;color:var(--t3);display:block">${label}</span><span class="fv2">${esc(val)}</span></div></div>`:'';
-    el.innerHTML=`<div style="padding:20px">
-      ${row('Contact',t.contact,'<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>')}
-      ${row('Email',t.email,'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/>')}
-      ${row('Phone',t.phone,'<path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .22h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/>')}
-      ${row('Address',t.address,'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>')}
-      ${t.city||t.state?row('Location',[t.city,t.state].filter(Boolean).join(', '),'<path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/>'):''}
-      ${row('Website',t.website,'<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>')}
-      ${t.notes?`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--br)"><div style="font-size:11px;color:var(--t3);margin-bottom:6px">NOTES</div><div class="bmtx2">${esc(t.notes)}</div></div>`:''}
-    </div>`;
-  }
+      <div class="bmsc2">
+        <div class="bmst2"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>Location</div>
+        ${(t.city||'')?`<div class="bmf2"><span style="color:#A89B7E;font-size:12px;min-width:46px">City:</span>&nbsp;<div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">${(t.city||'').split(',').map(c=>c.trim()).filter(Boolean).map(c=>`<span class="zt2">${esc(c)}</span>`).join('')}</div></div>`:`<div class="bmf2"><span style="color:#A89B7E;font-size:12px;min-width:46px">City:</span>&nbsp;<span class="fv2">—</span></div>`}
+        ${(t.county||'')?`<div class="bmf2"><span style="color:#A89B7E;font-size:12px;min-width:46px">County:</span>&nbsp;<div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">${(t.county||'').split(',').map(c=>c.trim()).filter(Boolean).map(c=>`<span class="zt2">${esc(c)}</span>`).join('')}</div></div>`:`<div class="bmf2"><span style="color:#A89B7E;font-size:12px;min-width:46px">County:</span>&nbsp;<span class="fv2">—</span></div>`}
+        ${(t.state||'')?`<div class="bmf2"><span style="color:#A89B7E;font-size:12px;min-width:46px">State:</span>&nbsp;<div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">${(t.state||'').split(',').map(s=>s.trim()).filter(Boolean).map(s=>`<span class="zt2" style="border-color:#C9A84C44;color:#C9A84C">${esc(s)}</span>`).join('')}</div></div>`:`<div class="bmf2"><span style="color:#A89B7E;font-size:12px;min-width:46px">State:</span>&nbsp;<span class="fv2">—</span></div>`}
+      </div>
+    </div>
+  </div>
+  <div class="bmsec2">
+    <div class="bmfl2">
+      <div class="bmflt2"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h12v9H9l-3 2v-2H2z"/></svg>Notes</div>
+      <div class="bmtx2">${esc(t.notes||'No notes entered.')}</div>
+    </div>
+  </div>
+</div>`;}
+  else{document.getElementById('tcbmbody').innerHTML=`
+<div style="padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+  <div class="bmsec2">
+    <div class="bmsc2-grid">
+      <div class="bmsc2">
+        <div class="bmst2"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg>Contact Information</div>
+        <label class="bel2">Company name</label><input class="bei2" id="tce-name" value="${esc(t.name||'')}">
+        <label class="bel2">Contact name</label><input class="bei2" id="tce-contact" value="${esc(t.contact||'')}">
+        <label class="bel2">Email</label><input class="bei2" id="tce-email" type="email" value="${esc(t.email||'')}">
+        <label class="bel2">Phone</label><input class="bei2" id="tce-phone" type="tel" value="${esc(t.phone||'')}" oninput="this.value=fp(this.value)">
+        <label class="bel2">Website</label><input class="bei2" id="tce-website" type="url" placeholder="https://" value="${esc(t.website||'')}">
+      </div>
+      <div class="bmsc2">
+        <div class="bmst2"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>Location</div>
+        <label class="bel2">City</label><input class="bei2" id="tce-city" value="${esc(t.city||'')}">
+        <label class="bel2">County</label><input class="bei2" id="tce-county" value="${esc(t.county||'')}">
+        <label class="bel2">State</label><input class="bei2" id="tce-state" value="${esc(t.state||'')}">
+      </div>
+    </div>
+  </div>
+  <div class="bmsec2">
+    <div class="bmfl2">
+      <div class="bmflt2"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h12v9H9l-3 2v-2H2z"/></svg>Notes</div>
+      <textarea class="bet2" id="tce-notes">${esc(t.notes||'')}</textarea>
+    </div>
+  </div>
+</div>`;}
 }
 
 function togTCE(){
   tcbem=!tcbem;
   const t=titleCos.find(x=>x.id===etcid);
   if(!t)return;
-  document.getElementById('tcbedit').innerHTML=tcbem?'Cancel Edit':'<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg> Edit';
+  document.getElementById('tcbedit').innerHTML=tcbem?'Cancel Edit':`<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg> Edit`;
   document.getElementById('tcbfoo').style.display=tcbem?'flex':'none';
   renderTCM(t,tcbem);
 }
@@ -2362,12 +2426,13 @@ function saveTCE(){
   const idx=titleCos.findIndex(t=>t.id===etcid);
   if(idx===-1)return;
   const v=id=>document.getElementById(id)?.value||'';
-  titleCos[idx]={...titleCos[idx],name:v('tce-name'),contact:v('tce-contact'),email:v('tce-email'),phone:v('tce-phone'),address:v('tce-address'),city:v('tce-city'),state:v('tce-state'),website:v('tce-website'),notes:v('tce-notes')};
+  titleCos[idx]={...titleCos[idx],name:v('tce-name'),contact:v('tce-contact'),email:v('tce-email'),phone:v('tce-phone'),website:v('tce-website'),city:toTitleCase(v('tce-city')),county:toTitleCase(v('tce-county')),state:v('tce-state'),notes:v('tce-notes')};
   const t=titleCos[idx];
   document.getElementById('tcbname').textContent=t.name;
-  document.getElementById('tcbsub').textContent=t.contact||'';
+  document.getElementById('tcbbadge').textContent=t.city||t.state?[t.city,t.state].filter(Boolean).join(', '):'';
+  document.getElementById('tcbsub').textContent=t.name;
   tcbem=false;
-  document.getElementById('tcbedit').innerHTML='<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg> Edit';
+  document.getElementById('tcbedit').innerHTML=`<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg> Edit`;
   document.getElementById('tcbfoo').style.display='none';
   renderTCM(t,false);
   renderTitleCos();
@@ -2376,11 +2441,12 @@ function saveTCE(){
 
 function openNTC(){
   _playTick();
-  const nt={id:ntcid++,name:'',contact:'',email:'',phone:'',address:'',city:'',state:'',website:'',notes:''};
+  const nt={id:ntcid++,name:'',contact:'',email:'',phone:'',website:'',city:'',county:'',state:'',notes:''};
   titleCos.push(nt);
   saveToStorage();
   etcid=nt.id;tcbem=true;
   document.getElementById('tcbname').textContent='New Title Company';
+  document.getElementById('tcbbadge').textContent='';
   document.getElementById('tcbsub').textContent='';
   document.getElementById('tcbedit').textContent='Cancel Edit';
   document.getElementById('tcbfoo').style.display='flex';
@@ -2388,7 +2454,13 @@ function openNTC(){
   document.getElementById('tcbmodal').style.display='flex';
 }
 
-function closeTCB(){document.getElementById('tcbmodal').style.display='none';renderTitleCos();}
+function closeTCB(){
+  _playTick();
+  document.getElementById('tcbmodal').style.display='none';
+  if(tcbem&&etcid!==null){const idx=titleCos.findIndex(t=>t.id===etcid);if(idx!==-1&&!titleCos[idx].name){titleCos.splice(idx,1);saveToStorage();}}
+  etcid=null;tcbem=false;
+  renderTitleCos();
+}
 
 function trigTCD(id){
   const t=titleCos.find(x=>x.id===id);
@@ -2399,10 +2471,7 @@ function trigTCD(id){
 function cancelTCE(){
   tcbem=false;
   const t=titleCos.find(x=>x.id===etcid);
-  if(!t)return;
-  document.getElementById('tcbedit').innerHTML='<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg> Edit';
-  document.getElementById('tcbfoo').style.display='none';
-  renderTCM(t,false);
+  if(t){document.getElementById('tcbedit').innerHTML=`<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg> Edit`;document.getElementById('tcbfoo').style.display='none';renderTCM(t,false);}
 }
 
 
