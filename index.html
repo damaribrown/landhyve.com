@@ -570,7 +570,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
 .hpsb.sv{background:#1D9E75;color:#fff}
 .hpem{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#6B5F48;padding:24px;text-align:center;font-size:12px}
 .hpem svg{width:36px;height:36px;opacity:.35}
-.hpl{flex:1;overflow-y:auto}
+.hpl{flex:1;overflow-y:auto;min-height:0}
 .hpb{padding:11px 14px;border-bottom:1px solid #1a1a1a;cursor:pointer;transition:background .12s}
 .hpb:hover{background:#1a1a1a}
 .hpbn{font-size:12px;font-weight:600;color:#E8C97A;margin-bottom:4px}
@@ -877,8 +877,8 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
               <button class="hptb on" id="hptb-b" onclick="setHPTab('b')">Buyers</button>
               <button class="hptb" id="hptb-s" onclick="setHPTab('s')">Saved Markets</button>
             </div>
-            <div id="hpbv">
-              <div id="hpmh" style="display:none">
+            <div id="hpbv" style="display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden">
+              <div id="hpmh" style="display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden">
                 <div class="hpmh"><div class="hpmn" id="hpmn"></div><div class="hpmc" id="hpmc"></div><button class="hpsb" id="hpsb" onclick="openHMSave()">Save Market</button></div>
                 <div class="hpl" id="hpl"></div>
               </div>
@@ -2605,7 +2605,7 @@ function hmSelMarket(m){
   hmSel=m;
   document.getElementById('hpanel').classList.remove('cl');
   document.getElementById('hpem').style.display='none';
-  document.getElementById('hpmh').style.display='block';
+  document.getElementById('hpmh').style.display='flex';
   document.getElementById('hpmn').textContent=m.city+', '+m.state;
   document.getElementById('hpmc').textContent=m.buyers.length+' buyer'+(m.buyers.length!==1?'s':'')+' in this market';
   const sb=document.getElementById('hpsb');
@@ -2614,7 +2614,7 @@ function hmSelMarket(m){
   let h='';
   m.buyers.forEach((b,i)=>{h+='<div class="hpb" onclick="showHPDetail('+i+')"><div class="hpbn">'+esc(b.name)+'</div><div class="hpbr"><svg viewBox="0 0 16 16"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg>'+esc(b.contact||'—')+'</div><div class="hpbr"><svg viewBox="0 0 16 16"><rect x="2" y="4" width="12" height="9" rx="1"/><path d="M2 7l6 4 6-4"/></svg>'+esc(b.email||'—')+'</div><div class="hpbr"><svg viewBox="0 0 16 16"><path d="M3 2h3l1.5 3.5-2 1.5a8 8 0 003.5 3.5l1.5-2L14 10v3a1 1 0 01-1 1C6 14 2 10 2 3a1 1 0 011-1z"/></svg>'+esc(b.phone||'—')+'</div></div>';});
   document.getElementById('hpl').innerHTML=h;
-  document.getElementById('hpd').className='hpd';document.getElementById('hpbv').style.display='block';
+  document.getElementById('hpd').className='hpd';document.getElementById('hpbv').style.display='flex';
   if(_lfMap&&m.coords){_lfMap.flyTo([m.coords[1],m.coords[0]],7,{duration:1});}
   buildHMap();
 }
@@ -2624,11 +2624,11 @@ function showHPDetail(idx){
   const det=document.getElementById('hpd');det.className='hpd on';
   det.innerHTML='<div class="hpdh"><div><div class="hpdn">'+esc(b.name)+'</div><div class="hpdl">'+esc(b.city||'')+', '+esc(b.state||'')+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><button class="hpbk" onclick="hmBackToList()"><svg viewBox="0 0 16 16"><polyline points="10 4 6 8 10 12"/></svg>Back</button><span class="hppb">'+b.permits+' Permits</span></div></div><div class="hpdb"><div><div class="hpst">Contact</div><div class="hpdf"><svg viewBox="0 0 16 16"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg>'+esc(b.contact||'—')+'</div><div class="hpdf"><svg viewBox="0 0 16 16"><rect x="2" y="4" width="12" height="9" rx="1"/><path d="M2 7l6 4 6-4"/></svg>'+esc(b.email||'—')+'</div><div class="hpdf"><svg viewBox="0 0 16 16"><path d="M3 2h3l1.5 3.5-2 1.5a8 8 0 003.5 3.5l1.5-2L14 10v3a1 1 0 01-1 1C6 14 2 10 2 3a1 1 0 011-1z"/></svg>'+esc(b.phone||'—')+'</div></div><div><div class="hpst">Buy Box</div><div style="font-size:12px;color:#A89B7E;line-height:1.5">'+esc(b.buyBox||'Not specified')+'</div></div><button class="hpab" onclick="openBuyer('+b.id+')">View Full Profile</button></div>';
 }
-function hmBackToList(){document.getElementById('hpd').className='hpd';document.getElementById('hpbv').style.display='block';}
+function hmBackToList(){document.getElementById('hpd').className='hpd';document.getElementById('hpbv').style.display='flex';}
 function hmClear(){hmSel=null;document.getElementById('hpanel').classList.add('cl');document.getElementById('hpem').style.display='flex';document.getElementById('hpmh').style.display='none';document.getElementById('hpd').className='hpd';buildHMap();}
 function setHMMode(m){hmMode=m;document.getElementById('hmbp').className='mvb'+(m==='pins'?' on':'');document.getElementById('hmbh').className='mvb'+(m==='heatmap'?' on':'');document.getElementById('hleg').className='hleg'+(m==='heatmap'?' on':'');buildHMap();}
 function setHMSat(s){hmSat=s;document.getElementById('hmsm').className='satb'+(s?'':' on');document.getElementById('hmss').className='satb'+(s?' on':'');buildHMap();}
-function setHPTab(t){hmPTab=t;document.getElementById('hptb-b').className='hptb'+(t==='b'?' on':'');document.getElementById('hptb-s').className='hptb'+(t==='s'?' on':'');document.getElementById('hpbv').style.display=t==='b'?'block':'none';document.getElementById('hpd').className='hpd';document.getElementById('hpsv').style.display=t==='s'?'block':'none';if(t==='s')renderHMSaved();}
+function setHPTab(t){hmPTab=t;document.getElementById('hptb-b').className='hptb'+(t==='b'?' on':'');document.getElementById('hptb-s').className='hptb'+(t==='s'?' on':'');document.getElementById('hpbv').style.display=t==='b'?'flex':'none';document.getElementById('hpd').className='hpd';document.getElementById('hpsv').style.display=t==='s'?'block':'none';if(t==='s')renderHMSaved();}
 function openHMSave(){if(!hmSel)return;document.getElementById('hsmn').textContent=hmSel.city+', '+hmSel.state;document.getElementById('hsmnotes').value='';document.getElementById('hsmw').className='hsmw on';}
 function closeHMSave(){document.getElementById('hsmw').className='hsmw';}
 function confirmHMSave(){if(!hmSel)return;const notes=document.getElementById('hsmnotes').value;if(!hmSaved.find(s=>s.city===hmSel.city&&s.state===hmSel.state))hmSaved.push({city:hmSel.city,state:hmSel.state,count:hmSel.buyers.length,notes});closeHMSave();const sb=document.getElementById('hpsb');if(sb){sb.textContent='Market Saved ✓';sb.className='hpsb sv';}renderHMSaved();}
