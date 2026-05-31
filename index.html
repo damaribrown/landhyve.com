@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LandHyve CRM</title>
+<title>LeadHyve CRM</title>
 <!-- Bee favicon as inline SVG data URI -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23C9A84C'/%3E%3Cellipse cx='11.2' cy='8' rx='6.4' ry='4' fill='rgba(255,255,255,0.55)' transform='rotate(-20 11.2 8)'/%3E%3Cellipse cx='20.8' cy='8' rx='6.4' ry='4' fill='rgba(255,255,255,0.55)' transform='rotate(20 20.8 8)'/%3E%3Crect x='9.6' y='11.2' width='12.8' height='4.8' rx='2.4' fill='%23111'/%3E%3Crect x='10.4' y='16' width='11.2' height='4.8' rx='2.4' fill='%23C9A84C'/%3E%3Cline x1='14.4' y1='16' x2='14.4' y2='20.8' stroke='%23111' stroke-width='1.6'/%3E%3Cline x1='17.6' y1='16' x2='17.6' y2='20.8' stroke='%23111' stroke-width='1.6'/%3E%3Cpath d='M16 20.8L16 25.6' stroke='%23C9A84C' stroke-width='1.9' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='10.4' r='3.2' fill='%23C9A84C'/%3E%3Cpath d='M14.4 8Q12 4 11.2 3.2' stroke='%23C9A84C' stroke-width='1.4' stroke-linecap='round'/%3E%3Cpath d='M17.6 8Q20 4 20.8 3.2' stroke='%23C9A84C' stroke-width='1.4' stroke-linecap='round'/%3E%3Ccircle cx='11.2' cy='3.2' r='1.1' fill='%23C9A84C'/%3E%3Ccircle cx='20.8' cy='3.2' r='1.1' fill='%23C9A84C'/%3E%3C/svg%3E">
 <style>
@@ -636,8 +636,8 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
         </svg>
       </div>
       <div>
-        <div class="splash-brand-name">LandHyve</div>
-        <div class="splash-brand-sub">Land Wholesale CRM</div>
+        <div class="splash-brand-name">LeadHyve</div>
+        
       </div>
     </div>
     <div class="splash-headline">Sign in to access your CRM dashboard, seller leads, buyers, and market data.</div>
@@ -653,7 +653,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
       <div class="splash-err" id="login-err"></div>
       <button class="splash-btn" onclick="doLogin()">Sign In</button>
     </div>
-    <div class="splash-footer">LandHyve · Private access only</div>
+    <div class="splash-footer">LeadHyve · Private access only</div>
   </div>
 </div>
 
@@ -676,8 +676,8 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
         </svg>
       </div>
       <div class="sn-logo-text">
-        <div class="sn-logo-name">LandHyve</div>
-        <div class="sn-logo-sub">Land Wholesale CRM</div>
+        <div class="sn-logo-name">LeadHyve</div>
+        
       </div>
     </div>
 
@@ -856,6 +856,13 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
             <button class="mvb on" id="hmbp" onclick="setHMMode('pins')">Pins</button>
             <button class="mvb" id="hmbh" onclick="setHMMode('heatmap')">Heatmap</button>
             <button class="mvb cl" onclick="hmClear()">Clear</button>
+          </div>
+          <div style="width:1px;height:22px;background:#2a2a2a;flex-shrink:0"></div>
+          <span class="mvl">Property Type:</span>
+          <div class="mvbs" id="hm-prop-btns">
+            <button class="mvb on" id="hmpt-vacant" onclick="setHMPropType('vacant_land')">Vacant Land</button>
+            <button class="mvb" id="hmpt-residential" onclick="setHMPropType('residential')">Residential</button>
+            <button class="mvb" id="hmpt-commercial" onclick="setHMPropType('commercial')">Commercial</button>
           </div>
           <div class="hmsp"></div>
           <div class="satg">
@@ -1381,8 +1388,8 @@ let nid=1;
 
 let buyers=[]
 let nbid=1;
-let hmMode='pins',hmSat=false,hmSel=null,hmPTab='b',hmSaved=[],hmUsData=null;
-let privateBuyerIds=new Set(),buyerListMode='public';
+let hmMode='pins',hmSat=false,hmSel=null,hmPTab='b',hmSaved=[],hmUsData=null,hmMapPropType='vacant_land';
+let privateBuyerIds=new Set(),buyerListMode='public',buyerPropType='vacant_land';
 
 /* ══ INIT ══ */
 async function initApp(){
@@ -1771,8 +1778,65 @@ function updNet(){
   const fee=_mv('f-af'),jf=_mv('f-jv'),rc=_mv('f-rc'),cc=_mv('f-cc'),n=fee-jf-rc-cc;const nb=document.getElementById('nbo2');if(!nb)return;nb.innerHTML='<div class="nr2"><span class="lb2">Assignment fee</span><span class="v2">'+f$(fee)+'</span></div>'+(jf>0?'<div class="nr2 ded"><span class="lb2">JV fee</span><span class="v2">- '+f$(jf)+'</span></div>':'')+(rc>0?'<div class="nr2 ded"><span class="lb2">Realtor commission</span><span class="v2">- '+f$(rc)+'</span></div>':'')+(cc>0?'<div class="nr2 ded"><span class="lb2">Closing costs</span><span class="v2">- '+f$(cc)+'</span></div>':'')+'<div class="nr2 tot"><span class="lb2">Net to you</span><span class="v2">'+f$(n)+'</span></div>';}
 function sfn(inp,lid){if(inp.files[0])document.getElementById(lid).textContent=inp.files[0].name;}
 function sfnMulti(inp,lid){if(inp.files&&inp.files.length){const names=[...inp.files].map(f=>f.name).join(', ');document.getElementById(lid).textContent=names;}}
+/* ══ PROPERTY TYPE for lead modal ══ */
+let _leadPropType = 'vacant_land'; // 'vacant_land' | 'residential' | 'commercial'
+
+function selLeadPropType(type){
+  _playTick();
+  _leadPropType = type;
+  // Re-render just the property-specific fields section
+  const pfsEl = document.getElementById('prop-fields-section');
+  if(pfsEl) pfsEl.outerHTML = buildPropFields(_leadPropType, window._currentLeadData||{});
+  // Update button states
+  ['vacant_land','residential','commercial'].forEach(t=>{
+    const btn = document.getElementById('pt-btn-'+t);
+    if(btn){
+      if(t===type){
+        btn.style.background='#C9A84C';btn.style.color='#111';btn.style.borderColor='#C9A84C';
+      } else {
+        btn.style.background='transparent';btn.style.color='#A89B7E';btn.style.borderColor='#2a2a2a';
+      }
+    }
+  });
+}
+
+function buildPropTypeSelector(current){
+  const types=[
+    {id:'vacant_land',label:'Vacant Land',icon:'<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 13l4-5 3 3 3-4 4 6H1z"/></svg>'},
+    {id:'residential',label:'Residential',icon:'<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 8L8 2l6 6v6H2z"/><rect x="6" y="10" width="4" height="4"/></svg>'},
+    {id:'commercial',label:'Commercial',icon:'<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="12" height="10" rx="1"/><path d="M5 4V2h6v2"/><path d="M2 8h12"/></svg>'},
+  ];
+  let h='<div class="fg2 fu" style="margin-bottom:4px"><label style="font-size:11px;font-weight:600;color:#C9A84C;letter-spacing:.5px;text-transform:uppercase">Property Type</label>';
+  h+='<div style="display:flex;gap:8px;margin-top:6px">';
+  types.forEach(t=>{
+    const sel=current===t.id;
+    h+=`<button type="button" id="pt-btn-${t.id}" onclick="selLeadPropType('${t.id}')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 8px;border-radius:8px;border:1.5px solid ${sel?'#C9A84C':'#2a2a2a'};background:${sel?'#C9A84C':'transparent'};color:${sel?'#111':'#A89B7E'};font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s" onmouseover="if('${t.id}'!==_leadPropType){this.style.borderColor='#C9A84C55';this.style.color='#F5F0E8'}" onmouseout="if('${t.id}'!==_leadPropType){this.style.borderColor='#2a2a2a';this.style.color='#A89B7E'}">${t.icon}${t.label}</button>`;
+  });
+  h+='</div></div>';
+  return h;
+}
+
+function buildPropFields(type, d){
+  let h='<div id="prop-fields-section">';
+  if(type==='vacant_land'){
+    h+=`<div class="fr2"><div class="fg2"><label>Lot / Acreage Size</label><input id="f-lt" type="text" value="${esc(d.lot||'')}" placeholder="5 acres"></div><div class="fg2"><label>APN</label><input id="f-apn" type="text" value="${esc(d.apn||'')}" placeholder="000-00-0000"></div></div>
+    <div class="fr2"><div class="fg2"><label>County</label><input id="f-cn" type="text" value="${esc(d.county||'')}" placeholder="County"></div></div>`;
+  } else {
+    // Residential or Commercial — Sq Ftg, Beds, Baths, County (no lot size, no APN)
+    const isRes = type==='residential';
+    h+=`<div class="fr2"><div class="fg2"><label>Sq. Footage</label><input id="f-sqft" type="text" value="${esc(d.sqft||'')}" placeholder="1,200 sq ft"></div><div class="fg2"><label>County</label><input id="f-cn" type="text" value="${esc(d.county||'')}" placeholder="County"></div></div>
+    <div class="fr2"><div class="fg2"><label>Bedrooms</label><input id="f-beds" type="number" min="0" value="${esc(d.beds||'')}" placeholder="3"></div><div class="fg2"><label>Bathrooms</label><input id="f-baths" type="number" min="0" step="0.5" value="${esc(d.baths||'')}" placeholder="2"></div></div>
+    <input type="hidden" id="f-lt" value=""><input type="hidden" id="f-apn" value="">`;
+  }
+  h+='</div>';
+  return h;
+}
+
 function buildForm(l,isEdit){
   const d=l||{stage:'new'};const opp=IS_OPP(d.stage);
+  // Initialize property type from saved data or default
+  _leadPropType = d.propType || 'vacant_land';
+  window._currentLeadData = d;
   let sh=`<div class="fg2 fu"><label>Stage</label><div class="sr3">`;STAGES.forEach(s=>{const sel=d.stage===s.id;sh+=`<button type="button" class="sbn2 ${sel?'on':''}" style="${sel?`border-color:${s.color};color:${s.color};background:${s.color}22`:''}" onclick="selStg(this,'${s.id}','${s.color}')">${s.label}</button>`;});sh+=`</div></div>`;
   const cdh='';
   let oh='';
@@ -1806,11 +1870,11 @@ function buildForm(l,isEdit){
   }
   const ah='';
   return `<div class="sh2">Lead info</div>
+    ${buildPropTypeSelector(_leadPropType)}
     <div class="fr2"><div class="fg2"><label>Seller name</label><input id="f-nm" type="text" value="${esc(d.name||'')}" placeholder="Full name"></div><div class="fg2"><label>Phone</label><input id="f-ph" type="tel" value="${esc(d.phone||'')}" placeholder="(555) 000-0000" oninput="this.value=fp(this.value)"></div></div>
     <div class="fg2 fu"><label>Email</label><input id="f-em" type="email" value="${esc(d.email||'')}" placeholder="email@example.com"></div>
     <div class="fr2"><div class="fg2"><label>Property address</label><input id="f-ad" type="text" value="${esc(d.address||'')}" placeholder="123 Main St"></div><div class="fg2"><label>City / State / ZIP</label><input id="f-cy" type="text" value="${esc(d.city||'')}" placeholder="Austin, TX 78000"></div></div>
-    <div class="fr2"><div class="fg2"><label>Lot size</label><input id="f-lt" type="text" value="${esc(d.lot||'')}" placeholder="5 acres"></div><div class="fg2"><label>APN</label><input id="f-apn" type="text" value="${esc(d.apn||'')}" placeholder="000-00-0000"></div></div>
-    <div class="fr2"><div class="fg2"><label>County</label><input id="f-cn" type="text" value="${esc(d.county||'')}" placeholder="County"></div></div>
+    ${buildPropFields(_leadPropType, d)}
     <div class="fg2 fu"><label>Notes</label><textarea id="f-nt">${esc(d.notes||'')}</textarea></div>
     ${sh}${cdh}${oh}${ah}`;}
 /* ══ INLINE FORM CALENDAR ══ */
@@ -1997,7 +2061,8 @@ function selStg(btn,sid,color){document.querySelectorAll('#mbd .sbn2').forEach(b
     }
   }
   if(wasOpp!==isOpp||isOpp){const _base=eid?leads.find(l=>l.id===eid)||{}:{};const curr=Object.assign({},_base,{stage:sid});document.getElementById('mbd').innerHTML=buildForm(curr,!!eid);_fcalInitTriggers();}}
-function collect(){const btns=[...document.querySelectorAll('#mbd .sbn2')];const sel=btns.find(b=>b.classList.contains('on'));let sid='new';if(sel){const m=sel.getAttribute('onclick').match(/'(new|priority|follow|future|contract|inventory|escrow|closed|dead)'/);if(m)sid=m[1];}const v=id=>document.getElementById(id)?.value||'',n=id=>parseFloat((document.getElementById(id)?.value||'').replace(/,/g,''))||0;const opp=IS_OPP(sid);const prev=eid?leads.find(l=>l.id===eid)||{}:{};const _liveComments=eid?((leads.find(l=>l.id===eid)||{}).comments||[]):(prev.comments||[]);const d={name:v('f-nm'),phone:v('f-ph'),email:v('f-em'),address:v('f-ad'),city:v('f-cy'),lot:v('f-lt'),apn:v('f-apn'),county:v('f-cn'),notes:v('f-nt'),stage:sid,comments:_liveComments};if(sid==='contract')d.contractSentDate=v('f-csd');if(opp){d.contractPrice=n('f-cp');d.askingPrice=n('f-ap');d.assignmentFee=n('f-af');d.jvFee=n('f-jv');d.realtorComm=n('f-rc');d.closingCosts=n('f-cc');if(sid==='escrow'){d.buyerName=v('f-bn');d.buyerEmail=v('f-be');d.buyerPhone=v('f-bp');d.titleCompany=v('f-tc');d.titleEmail=v('f-te');d.titlePhone=v('f-tp');}else{d.buyerName=prev.buyerName||'';d.buyerEmail=prev.buyerEmail||'';d.buyerPhone=prev.buyerPhone||'';d.titleCompany=prev.titleCompany||'';d.titleEmail=prev.titleEmail||'';d.titlePhone=prev.titlePhone||'';}d.closingDate=_getCalVal('f-cd');if(sid==='inventory')d.contractSignedDate=_getCalVal('f-inv-date');const sf=document.getElementById('f-sc'),af2=document.getElementById('f-ac');d.sellerContract=sf?.files[0]?sf.files[0].name:(prev.sellerContract||'');d.assignmentContract=af2?.files[0]?af2.files[0].name:(prev.assignmentContract||'');const ad2=document.getElementById('f-ad2');d.addendums=ad2?.files?.length?[...ad2.files].map(f=>f.name).join(', '):(prev.addendums||'');if(sid==='closed'&&!prev.closedTimestamp)d.closedTimestamp=new Date().toISOString();else d.closedTimestamp=prev.closedTimestamp||'';}return d;}
+function collect(){const btns=[...document.querySelectorAll('#mbd .sbn2')];const sel=btns.find(b=>b.classList.contains('on'));let sid='new';if(sel){const m=sel.getAttribute('onclick').match(/'(new|priority|follow|future|contract|inventory|escrow|closed|dead)'/);if(m)sid=m[1];}const v=id=>document.getElementById(id)?.value||'',n=id=>parseFloat((document.getElementById(id)?.value||'').replace(/,/g,''))||0;const opp=IS_OPP(sid);const prev=eid?leads.find(l=>l.id===eid)||{}:{};const _liveComments=eid?((leads.find(l=>l.id===eid)||{}).comments||[]):(prev.comments||[]);const d={name:v('f-nm'),phone:v('f-ph'),email:v('f-em'),address:v('f-ad'),city:v('f-cy'),lot:v('f-lt'),apn:v('f-apn'),county:v('f-cn'),notes:v('f-nt'),stage:sid,comments:_liveComments,propType:_leadPropType,sqft:v('f-sqft'),beds:v('f-beds'),baths:v('f-baths')};if(sid==='contract')d.contractSentDate=v('f-csd');if(opp){d.contractPrice=n('f-cp');d.askingPrice=n('f-ap');d.assignmentFee=n('f-af');d.jvFee=n('f-jv');d.realtorComm=n('f-rc');d.closingCosts=n('f-cc');if(sid==='escrow'){d.buyerName=v('f-bn');d.buyerEmail=v('f-be');d.buyerPhone=v('f-bp');d.titleCompany=v('f-tc');d.titleEmail=v('f-te');d.titlePhone=v('f-tp');}else{d.buyerName=prev.buyerName||'';d.buyerEmail=prev.buyerEmail||'';d.buyerPhone=prev.buyerPhone||'';d.titleCompany=prev.titleCompany||'';d.titleEmail=prev.titleEmail||'';d.titlePhone=prev.titlePhone||'';}d.closingDate=_getCalVal('f-cd');if(sid==='inventory')d.contractSignedDate=_getCalVal('f-inv-date');const sf=document.getElementById('f-sc'),af2=document.getElementById('f-ac');d.sellerContract=sf?.files[0]?sf.files[0].name:(prev.sellerContract||'');d.assignmentContract=af2?.files[0]?af2.files[0].name:(prev.assignmentContract||'');const ad2=document.getElementById('f-ad2');d.addendums=ad2?.files?.length?[...ad2.files].map(f=>f.name).join(', '):(prev.addendums||'');if(sid==='closed'&&!prev.closedTimestamp)d.closedTimestamp=new Date().toISOString();else d.closedTimestamp=prev.closedTimestamp||'';}return d;}
+
 function saveLead(data){_playTick();if(eid===null){data.id=nid++;data.createdAt=new Date().toISOString();data.activity=[{t:'Just now',msg:'Lead created'}];leads.unshift(data);}else{const idx=leads.findIndex(l=>l.id===eid);const prev=leads[idx];if(prev.stage!==data.stage){data.activity=[...(prev.activity||[]),{t:'Just now',msg:`Moved to ${STAGES.find(s=>s.id===data.stage).label}`}];if(data.stage==='closed'&&!prev.closedTimestamp)data.closedTimestamp=new Date().toISOString();else if(data.stage!=='closed')data.closedTimestamp=prev.closedTimestamp||'';}else data.activity=prev.activity||[];leads[idx]={...prev,...data};}renderSellers();saveToStorage();closeModal();}
 function openNew(){_playTick();eid=null;document.getElementById('mtit').textContent='New Seller Lead';document.getElementById('mbd').innerHTML=buildForm(null,false);_fcalInitTriggers();document.getElementById('mft').innerHTML=`<button class="bcn3" onclick="closeModal()">Cancel</button><button class="bsv3" onclick="saveLead(collect())">Save Lead</button>`;const _mtb2=document.getElementById('modal-task-btn');if(_mtb2)_mtb2.style.display='none';const _ap=document.getElementById('activity-panel');if(_ap)_ap.style.display='none';document.getElementById('modal').style.display='flex';}
 function openEdit(id){_playTick();eid=id;const l=leads.find(x=>x.id===id);const opp=IS_OPP(l.stage);document.getElementById('mtit').innerHTML=`${esc(l.name||'Lead')}${opp?' <span class="ot" style="font-size:10px">OPP</span>':''}`;document.getElementById('mbd').innerHTML=buildForm(l,true);_fcalInitTriggers();document.getElementById('mft').innerHTML=`<button class="bdl2" onclick="trigSLD(${id});closeModal()">Delete</button><button class="bcn3" onclick="closeModal()">Cancel</button><button class="bsv3" onclick="saveLead(collect())">Save Changes</button>`;const _mtb=document.getElementById('modal-task-btn');if(_mtb){_mtb.style.display='flex';_mtb.setAttribute('data-lead-id',id);_mtb.setAttribute('data-lead-addr',l.address||'');}document.getElementById('modal').style.display='flex';renderActivityPanel(id);document.getElementById('activity-comment-inp').value='';}
@@ -2006,11 +2071,12 @@ function renderSellers(){renderNav();renderPipe();}
 
 /* ══ BUYERS ══ */
 function toTitleCase(s){return(s||'').split(',').map(p=>p.trim().split(' ').map(w=>w?w[0].toUpperCase()+w.slice(1).toLowerCase():'').join(' ')).join(', ');}
-function filtB(){return buyers.filter(b=>{if(buyerListMode==='private'&&!privateBuyerIds.has(b.id))return false;const q=(bsq||'').toLowerCase();if(q&&!(b.name||'').toLowerCase().includes(q)&&!(b.contact||'').toLowerCase().includes(q)&&!(b.email||'').toLowerCase().includes(q))return false;if(bst2&&!(b.state||'').split(',').map(s=>s.trim().toLowerCase()).some(s=>s===bst2.toLowerCase()))return false;if(bcty&&!(b.county||'').split(',').map(c=>c.trim().toLowerCase()).some(c=>c.includes(bcty.toLowerCase())))return false;if(bcit&&!(b.city||'').split(',').map(c=>c.trim().toLowerCase()).some(c=>c.includes(bcit.toLowerCase())))return false;return true;}).sort((a,b)=>(b.permits||0)-(a.permits||0));}
+function filtB(){return buyers.filter(b=>{if(buyerListMode==='private'&&!privateBuyerIds.has(b.id))return false;// Filter by property type — existing buyers (no propType field) belong to vacant_land
+const bpt=b.propType||'vacant_land';if(bpt!==buyerPropType)return false;const q=(bsq||'').toLowerCase();if(q&&!(b.name||'').toLowerCase().includes(q)&&!(b.contact||'').toLowerCase().includes(q)&&!(b.email||'').toLowerCase().includes(q))return false;if(bst2&&!(b.state||'').split(',').map(s=>s.trim().toLowerCase()).some(s=>s===bst2.toLowerCase()))return false;if(bcty&&!(b.county||'').split(',').map(c=>c.trim().toLowerCase()).some(c=>c.includes(bcty.toLowerCase())))return false;if(bcit&&!(b.city||'').split(',').map(c=>c.trim().toLowerCase()).some(c=>c.includes(bcit.toLowerCase())))return false;return true;}).sort((a,b)=>(b.permits||0)-(a.permits||0));}
 function startPE(id){const b=buyers.find(x=>x.id===id);if(!b)return;const w=document.getElementById('pw-'+id);if(!w)return;w.innerHTML=`<input class="pei2" id="pe-${id}" type="number" value="${b.permits}" onblur="savePE(${id})" onkeydown="if(event.key==='Enter')savePE(${id});if(event.key==='Escape')cancelPE(${id},${b.permits})">`;const inp=document.getElementById('pe-'+id);if(inp){inp.focus();inp.select();}}
 function savePE(id){const inp=document.getElementById('pe-'+id);if(!inp)return;const v=parseInt(inp.value)||0;const idx=buyers.findIndex(b=>b.id===id);if(idx===-1)return;buyers[idx].permits=v;saveToStorage();const w=document.getElementById('pw-'+id);if(w)w.innerHTML=`<span class="pb2" onclick="startPE(${id})" title="Click to edit">${v} Permits</span><span class="peh2">click to edit</span>`;}
 function cancelPE(id,orig){const w=document.getElementById('pw-'+id);if(w)w.innerHTML=`<span class="pb2" onclick="startPE(${id})" title="Click to edit">${orig} Permits</span><span class="peh2">click to edit</span>`;}
-function buildBuyerRows(list){let rows='';list.forEach(b=>{const zh=(b.zips||[]).slice(0,3).map(z=>`<span class="zt2">${esc(z)}</span>`).join('');const zex=(b.zips||[]).length>3?`<span class="zt2">+${(b.zips||[]).length-3}</span>`:'';const isSel=selB.has(b.id);rows+=`<div class="brow2 ${isSel?'sel':''}" id="br-${b.id}"><div class="bri2"><div style="flex-shrink:0;margin-right:4px"><div class="ckb ${isSel?'on':''}" id="bcb-${b.id}" onclick="togBS(${b.id})"></div></div><div class="brl2"><div class="bnr2"><span class="bn2">${esc(b.name)}</span><div class="pw2" id="pw-${b.id}"><span class="pb2" onclick="startPE(${b.id})" title="Click to edit">${b.permits} Permits</span><span class="peh2">click to edit</span></div></div><div class="bcn2"><svg viewBox="0 0 16 16" width="13" height="13"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg>${esc(b.contact||'—')}</div><div style="display:flex;gap:10px;flex-direction:column;margin-top:6px">${b.email?`<div class="mi"><svg viewBox="0 0 16 16"><rect x="2" y="4" width="12" height="9" rx="1"/><path d="M2 7l6 4 6-4"/></svg>${esc(b.email)}</div>`:''} ${b.phone?`<div class="mi"><svg viewBox="0 0 16 16"><path d="M3 2h3l1.5 3.5-2 1.5a8 8 0 003.5 3.5l1.5-2L14 10v3a1 1 0 01-1 1C6 14 2 10 2 3a1 1 0 011-1z"/></svg>${esc(b.phone)}</div>`:''} ${b.website?`<div class="mi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c-2 2-3 4-3 6s1 4 3 6M8 2c2 2 3 4 3 6s-1 4-3 6"/></svg>${esc(b.website)}</div>`:''}</div></div><div class="brr2"><div class="ll2">Location</div><div class="lco2" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">${(b.city||'').split(',').map(c=>c.trim()).filter(Boolean).map(c=>`<span class="zt2">${esc(c)}</span>`).join('')}${(b.state||'').split(',').map(s=>s.trim()).filter(Boolean).map(s=>`<span class="zt2" style="border-color:#C9A84C44;color:#C9A84C">${esc(s)}</span>`).join('')}</div><div class="lco2" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">${(b.county||'').split(',').map(c=>c.trim()).filter(Boolean).map(c=>`<span class="zt2">${esc(c)}</span>`).join('')}</div><div class="lz2">${zh}${zex}</div></div><div class="bra2"><button class="eib" onclick="openBuyer(${b.id})">${EYE}</button><button class="tib" onclick="trigSBD(${b.id})">${TRASH}</button></div></div></div>`;});return rows;}
+function buildBuyerRows(list){let rows='';list.forEach(b=>{const zh=(b.zips||[]).slice(0,3).map(z=>`<span class="zt2">${esc(z)}</span>`).join('');const zex=(b.zips||[]).length>3?`<span class="zt2">+${(b.zips||[]).length-3}</span>`:'';const isSel=selB.has(b.id);const showPermits=(b.propType||'vacant_land')==='vacant_land';const permitsHtml=showPermits?`<div class="pw2" id="pw-${b.id}"><span class="pb2" onclick="startPE(${b.id})" title="Click to edit">${b.permits} Permits</span><span class="peh2">click to edit</span></div>`:`<div class="pw2" id="pw-${b.id}" style="display:none"></div>`;rows+=`<div class="brow2 ${isSel?'sel':''}" id="br-${b.id}"><div class="bri2"><div style="flex-shrink:0;margin-right:4px"><div class="ckb ${isSel?'on':''}" id="bcb-${b.id}" onclick="togBS(${b.id})"></div></div><div class="brl2"><div class="bnr2"><span class="bn2">${esc(b.name)}</span>${permitsHtml}</div><div class="bcn2"><svg viewBox="0 0 16 16" width="13" height="13"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg>${esc(b.contact||'—')}</div><div style="display:flex;gap:10px;flex-direction:column;margin-top:6px">${b.email?`<div class="mi"><svg viewBox="0 0 16 16"><rect x="2" y="4" width="12" height="9" rx="1"/><path d="M2 7l6 4 6-4"/></svg>${esc(b.email)}</div>`:''} ${b.phone?`<div class="mi"><svg viewBox="0 0 16 16"><path d="M3 2h3l1.5 3.5-2 1.5a8 8 0 003.5 3.5l1.5-2L14 10v3a1 1 0 01-1 1C6 14 2 10 2 3a1 1 0 011-1z"/></svg>${esc(b.phone)}</div>`:''} ${b.website?`<div class="mi"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c-2 2-3 4-3 6s1 4 3 6M8 2c2 2 3 4 3 6s-1 4-3 6"/></svg>${esc(b.website)}</div>`:''}</div></div><div class="brr2"><div class="ll2">Location</div><div class="lco2" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">${(b.city||'').split(',').map(c=>c.trim()).filter(Boolean).map(c=>`<span class="zt2">${esc(c)}</span>`).join('')}${(b.state||'').split(',').map(s=>s.trim()).filter(Boolean).map(s=>`<span class="zt2" style="border-color:#C9A84C44;color:#C9A84C">${esc(s)}</span>`).join('')}</div><div class="lco2" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">${(b.county||'').split(',').map(c=>c.trim()).filter(Boolean).map(c=>`<span class="zt2">${esc(c)}</span>`).join('')}</div><div class="lz2">${zh}${zex}</div></div><div class="bra2"><button class="eib" onclick="openBuyer(${b.id})">${EYE}</button><button class="tib" onclick="trigSBD(${b.id})">${TRASH}</button></div></div></div>`;});return rows;}
 // Map dd id -> setter function
 const CDD_FNS={};
 function buildCustomDd(id,placeholder,options,currentVal,fnName){
@@ -2102,7 +2168,7 @@ function renderBuyers(){
   if(!rows)rows=`<div style="text-align:center;padding:56px;color:var(--t3);font-size:14px">No buyers found</div>`;
   const paginationBtn=hasMore?`<div style="display:flex;justify-content:center;padding:28px 0 20px"><button class="buyer-more-btn" id="buyer-more-btn" onclick="loadMoreBuyers()">View ${Math.min(50,fl.length-50)} more buyers</button></div>`:'';
   document.getElementById('buyerscontent').innerHTML=`
-    <div style="padding:22px 24px 16px;border-bottom:1px solid var(--br);background:var(--bg1)"><div style="display:flex;gap:6px;margin-bottom:14px;align-items:center;flex-wrap:wrap"><button class="blm-pill ${buyerListMode==='public'?'on':''}" id="pill-public" onclick="setBuyerMode('public')">Public Buyers</button><button class="blm-pill ${buyerListMode==='private'?'on':''}" id="pill-private" onclick="setBuyerMode('private')">My Private Buyers</button><button onclick="openImport()" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;background:transparent;border:1.5px solid #C9A84C;color:#C9A84C;border-radius:50px;padding:6px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:transform .18s,box-shadow .18s,background .18s;white-space:nowrap" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 5px 14px rgba(201,168,76,.3)';this.style.background='rgba(201,168,76,.08)'" onmouseout="this.style.transform='';this.style.boxShadow='';this.style.background='transparent'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import CSV / Excel</button></div><h1 style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:10px"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M2 14c0-3.3 3.6-5 6-5s6 1.7 6 5"/><circle cx="8" cy="6" r="3"/><path d="M14 14c0-2-1.5-3.5-3-4"/><circle cx="13" cy="5" r="2"/></svg>Buyer Management</h1><p style="font-size:13px;color:var(--t3)">Manage your buyer database and relationships</p></div>
+    <div style="padding:22px 24px 16px;border-bottom:1px solid var(--br);background:var(--bg1)"><div style="display:flex;gap:6px;margin-bottom:14px;align-items:center;flex-wrap:wrap"><button class="blm-pill ${buyerListMode==='public'?'on':''}" id="pill-public" onclick="setBuyerMode('public')">Public Buyers</button><button class="blm-pill ${buyerListMode==='private'?'on':''}" id="pill-private" onclick="setBuyerMode('private')">My Private Buyers</button><button onclick="openImport()" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;background:transparent;border:1.5px solid #C9A84C;color:#C9A84C;border-radius:50px;padding:6px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:transform .18s,box-shadow .18s,background .18s;white-space:nowrap" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 5px 14px rgba(201,168,76,.3)';this.style.background='rgba(201,168,76,.08)'" onmouseout="this.style.transform='';this.style.boxShadow='';this.style.background='transparent'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import CSV / Excel</button></div><div style="display:flex;gap:6px;margin-bottom:14px;align-items:center"><span style="font-size:11px;font-weight:600;color:#6B5F48;letter-spacing:.5px;text-transform:uppercase;margin-right:4px">Property Type:</span><button class="bpt-pill ${buyerPropType==='vacant_land'?'on':''}" onclick="setBuyerPropType('vacant_land')"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 13l4-5 3 3 3-4 4 6H1z"/></svg>Vacant Land</button><button class="bpt-pill ${buyerPropType==='residential'?'on':''}" onclick="setBuyerPropType('residential')"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 8L8 2l6 6v6H2z"/><rect x="6" y="10" width="4" height="4"/></svg>Residential</button><button class="bpt-pill ${buyerPropType==='commercial'?'on':''}" onclick="setBuyerPropType('commercial')"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="12" height="10" rx="1"/><path d="M5 4V2h6v2"/><path d="M2 8h12"/></svg>Commercial</button></div><h1 style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:10px"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M2 14c0-3.3 3.6-5 6-5s6 1.7 6 5"/><circle cx="8" cy="6" r="3"/><path d="M14 14c0-2-1.5-3.5-3-4"/><circle cx="13" cy="5" r="2"/></svg>Buyer Management</h1><p style="font-size:13px;color:var(--t3)">Manage your buyer database and relationships</p></div>
     <div class="bst2">
       <div class="bsc2"><div class="bsi2"><svg viewBox="0 0 16 16"><path d="M2 14c0-3.3 3.6-5 6-5s6 1.7 6 5"/><circle cx="8" cy="6" r="3"/></svg></div><div><div class="bsv2">${statBase.length}</div><div class="bsl2">Total Buyers</div></div></div>
       <div class="bsc2"><div class="bsi2"><svg viewBox="0 0 16 16"><path d="M8 2C5.8 2 4 3.8 4 6c0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z"/></svg></div><div><div class="bsv2">${allS.length}</div><div class="bsl2">Total States</div></div></div>
@@ -2113,7 +2179,7 @@ function renderBuyers(){
     <div class="blb2">${buildCustomDd('bst','\u2713 State',allS,bst2,'setBst')}${buildCustomDd('bcty','County',allCo,bcty,'setBcty')}${buildCustomDd('bcit','City',allCi,bcit,'setBcit')}</div>
     ${buildFilterPills(bst2,bcty,bcit)}
     <div class="bbulk2 ${bvis?'on':''}" id="bbulkb"><span class="bbc" id="bbulkc">${selB.size} selected</span><button class="bbd" onclick="trigBulkDel('buyers')">${TRASH} Delete Selected</button></div>
-    <div class="bcnt2" id="buyer-count-inner">${fl.length} builder${fl.length!==1?'s':''}</div>
+    <div class="bcnt2" id="buyer-count-inner">${fl.length} buyer${fl.length!==1?'s':''}</div>
     <div class="blist2" id="buyer-list-inner">${rows}</div>${paginationBtn}`;setTimeout(_restoreHasVal,0);}
 function _restoreHasVal(){
   // Re-apply has-val highlighting after re-render
@@ -2131,7 +2197,7 @@ function loadMoreBuyers(){
   const btn=document.getElementById('buyer-more-btn');
   if(btn){if(hasMore){const remaining=fl.length-bPage*50;btn.textContent='View '+Math.min(50,remaining)+' more buyers';}else btn.parentElement.remove();}
 }
-function openBuyer(id){_playTick();ebid=id;bem=false;const b=buyers.find(x=>x.id===id);if(!b)return;document.getElementById('bmname').textContent=b.name||'';document.getElementById('bmperm').textContent=b.permits+' Permits';document.getElementById('bmsub').textContent=b.name||'';document.getElementById('bmedit').innerHTML=`<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg> Edit`;document.getElementById('bmfoo').style.display='none';renderBM(b,false);updStarBtn();document.getElementById('bmodal').style.display='flex';}
+function openBuyer(id){_playTick();ebid=id;bem=false;const b=buyers.find(x=>x.id===id);if(!b)return;document.getElementById('bmname').textContent=b.name||'';const bpermEl=document.getElementById('bmperm');const showP=(b.propType||'vacant_land')==='vacant_land';bpermEl.textContent=showP?b.permits+' Permits':'';bpermEl.style.display=showP?'':'none';document.getElementById('bmsub').textContent=b.name||'';document.getElementById('bmedit').innerHTML=`<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg> Edit`;document.getElementById('bmfoo').style.display='none';renderBM(b,false);updStarBtn();document.getElementById('bmodal').style.display='flex';}
 function renderBM(b,em){
   const zips=(b.zips||[]).map(z=>`<span class="zt2">${esc(z)}</span>`).join(' ');
   if(!em){document.getElementById('bmbody').innerHTML=`
@@ -2178,7 +2244,7 @@ function renderBM(b,em){
         <label class="bel2">Email</label><input class="bei2" id="be-email" type="email" value="${esc(b.email||'')}">
         <label class="bel2">Phone</label><input class="bei2" id="be-phone" type="tel" value="${esc(b.phone||'')}" oninput="this.value=fp(this.value)">
         <label class="bel2">Website</label><input class="bei2" id="be-website" type="url" placeholder="https://" value="${esc(b.website||'')}">
-        <label class="bel2">Permits</label><input class="bei2" id="be-permits" type="number" value="${b.permits||0}">
+        <label class="bel2">Permits</label><input class="bei2" id="be-permits" type="number" value="${b.permits||0}" ${(b.propType||'vacant_land')!=='vacant_land'?'style="display:none"':''}><label class="bel2" ${(b.propType||'vacant_land')!=='vacant_land'?'style="display:none"':''}>Permits</label>
       </div>
       <div class="bmsc2">
         <div class="bmst2"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>Market(s)</div>
@@ -2206,14 +2272,14 @@ function renderBM(b,em){
 function togBE(){bem=!bem;const b=buyers.find(x=>x.id===ebid);if(!b)return;document.getElementById('bmedit').innerHTML=bem?'Cancel Edit':`<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg> Edit`;document.getElementById('bmfoo').style.display=bem?'flex':'none';renderBM(b,bem);}
 function cancelBE(){bem=false;const b=buyers.find(x=>x.id===ebid);if(b){document.getElementById('bmedit').innerHTML=`<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg> Edit`;document.getElementById('bmfoo').style.display='none';renderBM(b,false);}}
 function saveBE(){_playTick();const idx=buyers.findIndex(b=>b.id===ebid);if(idx===-1)return;const v=id=>document.getElementById(id)?.value||'';buyers[idx]={...buyers[idx],name:v('be-name'),contact:v('be-contact'),email:v('be-email'),phone:v('be-phone'),website:v('be-website'),permits:parseInt(v('be-permits'))||0,city:toTitleCase(v('be-city')),county:toTitleCase(v('be-county')),state:v('be-state'),zips:v('be-zips').split(',').map(z=>z.trim()).filter(Boolean),buyBox:v('be-buybox'),notes:v('be-notes')};const b=buyers[idx];document.getElementById('bmname').textContent=b.name;document.getElementById('bmperm').textContent=b.permits+' Permits';document.getElementById('bmsub').textContent=b.name;bem=false;document.getElementById('bmedit').innerHTML=`<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg> Edit`;document.getElementById('bmfoo').style.display='none';renderBM(b,false);renderBuyers();saveToStorage();}
-function openNB(){_playTick();const nb={id:nbid++,name:'',contact:'',email:'',phone:'',website:'',city:'',county:'',state:'',zips:[],permits:0,buyBox:'',notes:''};buyers.push(nb);saveToStorage();ebid=nb.id;bem=true;document.getElementById('bmname').textContent='New Buyer';document.getElementById('bmperm').textContent='0 Permits';document.getElementById('bmsub').textContent='';document.getElementById('bmedit').textContent='Cancel Edit';document.getElementById('bmfoo').style.display='flex';renderBM(nb,true);document.getElementById('bmodal').style.display='flex';}
+function openNB(){_playTick();const nb={id:nbid++,name:'',contact:'',email:'',phone:'',website:'',city:'',county:'',state:'',zips:[],permits:0,buyBox:'',notes:'',propType:buyerPropType};buyers.push(nb);saveToStorage();ebid=nb.id;bem=true;document.getElementById('bmname').textContent='New Buyer';const _bpEl=document.getElementById('bmperm');const _showP=buyerPropType==='vacant_land';_bpEl.textContent=_showP?'0 Permits':'';_bpEl.style.display=_showP?'':'none';document.getElementById('bmsub').textContent='';document.getElementById('bmedit').textContent='Cancel Edit';document.getElementById('bmfoo').style.display='flex';renderBM(nb,true);document.getElementById('bmodal').style.display='flex';}
 function renderBuyerList(){
   bPage=1;
   const fl=filtB();
   const listEl=document.getElementById('buyer-list-inner');
   const cntEl=document.getElementById('buyer-count-inner');
   if(!listEl)return;
-  if(cntEl)cntEl.textContent=fl.length+' builder'+(fl.length!==1?'s':'');
+  if(cntEl)cntEl.textContent=fl.length+' buyer'+(fl.length!==1?'s':'');
   const visible=fl.slice(0,50);
   const hasMore=fl.length>50;
   listEl.innerHTML=buildBuyerRows(visible)||`<div style="text-align:center;padding:56px;color:var(--t3);font-size:14px">No buyers found</div>`;
@@ -2229,6 +2295,7 @@ function updStarBtn(){const svg=document.getElementById('bmstar-svg');const btn=
 function trigPrivateStar(){const b=buyers.find(x=>x.id===ebid);if(!b)return;if(privateBuyerIds.has(ebid)){privateBuyerIds.delete(ebid);saveToStorage();updStarBtn();return;}document.getElementById('privm').innerHTML=`This will add <strong>${esc(b.name)}</strong> to your private buyers list.`;document.getElementById('privover').style.display='flex';}
 function cancelPriv(){document.getElementById('privover').style.display='none';}
 function confirmPriv(){privateBuyerIds.add(ebid);saveToStorage();updStarBtn();document.getElementById('privover').style.display='none';}
+function setBuyerPropType(type){_playTick();buyerPropType=type;bsq='';bst2='';bcty='';bcit='';bPage=1;renderBuyers();}
 function setBuyerMode(mode){buyerListMode=mode;bsq='';bst2='';bcty='';bcit='';bPage=1;renderBuyers();}
 /* ══════════════════════════════════════
    TITLE COMPANIES (mirrors Buyers)
@@ -2494,6 +2561,9 @@ function _getCityCoords(city){
 function buildMarketsFromBuyers(){
   const m={};
   buyers.forEach(b=>{
+    // Filter by the map's selected property type
+    const bpt=b.propType||'vacant_land';
+    if(bpt!==hmMapPropType)return;
     const city=(b.city||'').trim();
     const state=(b.state||'').trim();
     const coords=_getCityCoords(city)||_getCityCoords(state);
@@ -2628,6 +2698,7 @@ function hmBackToList(){document.getElementById('hpd').className='hpd';document.
 function hmClear(){hmSel=null;document.getElementById('hpanel').classList.add('cl');document.getElementById('hpem').style.display='flex';document.getElementById('hpmh').style.display='none';document.getElementById('hpd').className='hpd';buildHMap();}
 function setHMMode(m){hmMode=m;document.getElementById('hmbp').className='mvb'+(m==='pins'?' on':'');document.getElementById('hmbh').className='mvb'+(m==='heatmap'?' on':'');document.getElementById('hleg').className='hleg'+(m==='heatmap'?' on':'');buildHMap();}
 function setHMSat(s){hmSat=s;document.getElementById('hmsm').className='satb'+(s?'':' on');document.getElementById('hmss').className='satb'+(s?' on':'');buildHMap();}
+function setHMPropType(type){_playTick();hmMapPropType=type;hmSel=null;document.getElementById('hpanel').classList.add('cl');document.getElementById('hpem').style.display='flex';document.getElementById('hpmh').style.display='none';document.getElementById('hpd').className='hpd';['vacant_land','residential','commercial'].forEach(t=>{const id={vacant_land:'hmpt-vacant',residential:'hmpt-residential',commercial:'hmpt-commercial'}[t];const btn=document.getElementById(id);if(btn)btn.className='mvb'+(t===type?' on':'');});buildHMap();}
 function setHPTab(t){hmPTab=t;document.getElementById('hptb-b').className='hptb'+(t==='b'?' on':'');document.getElementById('hptb-s').className='hptb'+(t==='s'?' on':'');document.getElementById('hpbv').style.display=t==='b'?'flex':'none';document.getElementById('hpd').className='hpd';document.getElementById('hpsv').style.display=t==='s'?'block':'none';if(t==='s')renderHMSaved();}
 function openHMSave(){if(!hmSel)return;document.getElementById('hsmn').textContent=hmSel.city+', '+hmSel.state;document.getElementById('hsmnotes').value='';document.getElementById('hsmw').className='hsmw on';}
 function closeHMSave(){document.getElementById('hsmw').className='hsmw';}
@@ -3331,8 +3402,8 @@ function renderDash(){
     <!-- Welcome banner -->
     <div style="margin:20px 24px 0;background:linear-gradient(135deg,#2a1f06 0%,#3d2e10 50%,#1a1206 100%);border:1px solid #C9A84C55;border-radius:14px;padding:28px 32px;position:relative;overflow:hidden">
 
-      <h1 style="font-size:24px;font-weight:800;color:#E8C97A;margin-bottom:6px">Welcome to LandHyve</h1>
-      <p style="font-size:14px;color:#A89B7E;line-height:1.5">From Contract to Closing — Your Land Wholesale Command Center</p>
+      <h1 style="font-size:24px;font-weight:800;color:#E8C97A;margin-bottom:6px">Welcome to LeadHyve</h1>
+      <p style="font-size:14px;color:#A89B7E;line-height:1.5">From Contract to Closing in one click.</p>
     </div>
 
     <!-- Period pills + Export -->
@@ -3646,6 +3717,10 @@ html .ld-dark input:-webkit-autofill:focus {
 .blm-pill.on{background:#C9A84C;color:#111}
 .blm-pill:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(201,168,76,.25)}
 .blm-pill:hover:not(.on){background:#3d2e10;color:#E8C97A}
+/* ── BUYER PROPERTY TYPE PILLS ── */
+.bpt-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:50px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #2a2a2a;background:transparent;color:#A89B7E;font-family:inherit;transition:all .15s}
+.bpt-pill.on{background:#C9A84C;border-color:#C9A84C;color:#111}
+.bpt-pill:hover:not(.on){border-color:#C9A84C55;color:#F5F0E8}
 /* ── STAR BUTTON ── */
 .bmstar{width:30px;height:30px;border-radius:7px;border:1px solid #3a3a3a;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6B5F48;transition:all .15s}
 .bmstar:hover{border-color:#C9A84C;color:#C9A84C}
