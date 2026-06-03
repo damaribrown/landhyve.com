@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LandHyve CRM</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <!-- Bee favicon as inline SVG data URI -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23C9A84C'/%3E%3Cellipse cx='11.2' cy='8' rx='6.4' ry='4' fill='rgba(255,255,255,0.55)' transform='rotate(-20 11.2 8)'/%3E%3Cellipse cx='20.8' cy='8' rx='6.4' ry='4' fill='rgba(255,255,255,0.55)' transform='rotate(20 20.8 8)'/%3E%3Crect x='9.6' y='11.2' width='12.8' height='4.8' rx='2.4' fill='%23111'/%3E%3Crect x='10.4' y='16' width='11.2' height='4.8' rx='2.4' fill='%23C9A84C'/%3E%3Cline x1='14.4' y1='16' x2='14.4' y2='20.8' stroke='%23111' stroke-width='1.6'/%3E%3Cline x1='17.6' y1='16' x2='17.6' y2='20.8' stroke='%23111' stroke-width='1.6'/%3E%3Cpath d='M16 20.8L16 25.6' stroke='%23C9A84C' stroke-width='1.9' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='10.4' r='3.2' fill='%23C9A84C'/%3E%3Cpath d='M14.4 8Q12 4 11.2 3.2' stroke='%23C9A84C' stroke-width='1.4' stroke-linecap='round'/%3E%3Cpath d='M17.6 8Q20 4 20.8 3.2' stroke='%23C9A84C' stroke-width='1.4' stroke-linecap='round'/%3E%3Ccircle cx='11.2' cy='3.2' r='1.1' fill='%23C9A84C'/%3E%3Ccircle cx='20.8' cy='3.2' r='1.1' fill='%23C9A84C'/%3E%3C/svg%3E">
 <style>
@@ -133,6 +134,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
   position:relative;
 }
 .sn-item svg{flex-shrink:0;width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6}
+.sn-item .ti{flex-shrink:0;font-size:20px;width:20px;text-align:center;line-height:1}
 .sn-item-label{opacity:1;transition:opacity .2s;white-space:nowrap}
 .sn-item:hover{
   background:#C9A84C;color:#111 !important;
@@ -157,6 +159,22 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
   display:flex;align-items:center;gap:8px;
   padding:8px 12px;overflow:hidden;
 }
+
+/* MOUSE GLOW */
+#mouse-glow{
+  position:fixed;pointer-events:none;z-index:99998;
+  width:420px;height:420px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(201,168,76,.13) 0%,rgba(232,201,122,.06) 40%,transparent 70%);
+  transform:translate(-50%,-50%);
+  transition:opacity .3s;
+  mix-blend-mode:screen;
+}
+
+/* SMOOTH TAB TRANSITIONS */
+.vp{animation:none !important}
+.vp.on{animation:tabFadeIn .22s cubic-bezier(.4,0,.2,1) !important}
+@keyframes tabFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* MAIN CONTENT AREA */
 .main-area{
@@ -658,6 +676,7 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
 </div>
 
 <!-- ════ CRM APP ════ -->
+<div id="mouse-glow"></div>
 <div id="app" class="ld-dark">
 
   <!-- SIDE NAV -->
@@ -684,23 +703,27 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
     <!-- Nav items -->
     <div class="sn-items">
       <div class="sn-item on" id="tab-dashboard" data-label="Dashboard" onclick="sv('dashboard')">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" flex-shrink="0"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         <span class="sn-item-label">Dashboard</span>
       </div>
+      <div class="sn-item" id="tab-search" data-label="Search" onclick="sv('search')">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+        <span class="sn-item-label">Search</span>
+      </div>
       <div class="sn-item" id="tab-sellers" data-label="My Deals" onclick="sv('sellers')">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg>
         <span class="sn-item-label">My Deals</span>
       </div>
       <div class="sn-item" id="tab-buyers" data-label="Buyers" onclick="sv('buyers')">
-        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.5"/><path d="M2 20c0-4 3.1-7 7-7s7 3 7 7"/><circle cx="18" cy="8" r="2.5"/><path d="M22 20c0-3-1.8-5.5-4-6"/></svg>
         <span class="sn-item-label">Buyers</span>
       </div>
       <div class="sn-item" id="tab-titlecos" data-label="Title Companies" onclick="sv('titlecos')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2" width="18" height="20" rx="2"/><rect x="7" y="6" width="3" height="3" rx="0.5"/><rect x="14" y="6" width="3" height="3" rx="0.5"/><rect x="7" y="12" width="3" height="3" rx="0.5"/><rect x="14" y="12" width="3" height="3" rx="0.5"/><rect x="7" y="18" width="3" height="3" rx="0.5"/><rect x="14" y="18" width="3" height="3" rx="0.5"/></svg>
+        <i class="ti ti-files"></i>
         <span class="sn-item-label">Title Companies</span>
       </div>
       <div class="sn-item" id="tab-heatmap" data-label="Market Map" onclick="sv('heatmap')">
-        <svg viewBox="0 0 24 24"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4L3 7v13l6-3 6 3 6-3V4l-6 3-6-3z"/><line x1="9" y1="4" x2="9" y2="17"/><line x1="15" y1="7" x2="15" y2="20"/></svg>
         <span class="sn-item-label">Market Map</span>
       </div>
     </div>
@@ -748,6 +771,41 @@ html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:
   <div class="vc">
     <!-- DASHBOARD -->
     <div class="vp on" id="pane-dashboard"><div class="dw" id="dc"></div></div>
+
+    <!-- SEARCH (Address → Nearby Buyers) -->
+    <div class="vp" id="pane-search" style="flex-direction:column;overflow-y:auto">
+      <div style="padding:22px 28px 18px;border-bottom:1px solid var(--br);background:var(--bg1);flex-shrink:0">
+        <div style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:10px">🔍 Property Buyer Search</div>
+        <div style="font-size:13px;color:var(--t3)">Enter a property address to find the best-matched buyers within a 10-mile radius</div>
+      </div>
+      <div style="padding:24px 28px;flex-shrink:0">
+        <div style="display:flex;gap:12px;align-items:flex-end;max-width:760px">
+          <div style="flex:1">
+            <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:8px">Property Address</label>
+            <div id="search-ac-wrap" style="position:relative">
+              <input id="search-addr-inp" type="text" autocomplete="off" placeholder="e.g. 1234 Oak St, Houston, TX" style="width:100%;background:#1a1a1a;border:1.5px solid #2a2a2a;border-radius:10px;padding:13px 16px;font-size:14px;color:#F5F0E8;font-family:inherit;transition:border-color .18s;outline:none" onfocus="this.style.borderColor='#C9A84C'" onblur="setTimeout(()=>{this.style.borderColor='#2a2a2a';document.getElementById('search-ac-list').style.display='none'},160)" oninput="searchAcFetch(this.value)">
+              <div id="search-ac-list" style="display:none;position:absolute;top:calc(100%+4px);left:0;right:0;background:#111;border:1.5px solid #C9A84C;border-radius:10px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.6);overflow:hidden;animation:cddIn .15s ease"></div>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:8px">Property Type</label>
+            <div id="search-type-dd-wrap" style="position:relative">
+              <button id="search-type-btn" onclick="toggleSearchTypeDd()" style="display:flex;align-items:center;gap:8px;background:#1a1a1a;border:1.5px solid #2a2a2a;border-radius:10px;padding:13px 16px;font-size:14px;color:#F5F0E8;font-family:inherit;cursor:pointer;white-space:nowrap;min-width:160px;transition:border-color .18s" onmouseover="this.style.borderColor='#C9A84C'" onmouseout="if(!document.getElementById('search-type-dd').style.display||document.getElementById('search-type-dd').style.display==='none')this.style.borderColor='#2a2a2a'">
+                <span id="search-type-label">Vacant Land</span>
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto"><polyline points="4 6 8 10 12 6"/></svg>
+              </button>
+              <div id="search-type-dd" style="display:none;position:absolute;top:calc(100%+4px);left:0;right:0;background:#111;border:1.5px solid #C9A84C;border-radius:10px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.6);overflow:hidden;animation:cddIn .15s ease">
+                <div onclick="setSearchType('vacant_land','Vacant Land')" style="padding:12px 16px;font-size:13px;color:#A89B7E;cursor:pointer;transition:background .1s,color .1s" onmouseover="this.style.background='#1a1a1a';this.style.color='#F5F0E8'" onmouseout="this.style.background='';this.style.color='#A89B7E'">Vacant Land</div>
+                <div onclick="setSearchType('residential','Residential')" style="padding:12px 16px;font-size:13px;color:#A89B7E;cursor:pointer;transition:background .1s,color .1s" onmouseover="this.style.background='#1a1a1a';this.style.color='#F5F0E8'" onmouseout="this.style.background='';this.style.color='#A89B7E'">Residential</div>
+                <div onclick="setSearchType('commercial','Commercial')" style="padding:12px 16px;font-size:13px;color:#A89B7E;cursor:pointer;transition:background .1s,color .1s" onmouseover="this.style.background='#1a1a1a';this.style.color='#F5F0E8'" onmouseout="this.style.background='';this.style.color='#A89B7E'">Commercial</div>
+              </div>
+            </div>
+          </div>
+          <button onclick="runPropertySearch()" style="background:#C9A84C;color:#111;border:none;border-radius:10px;padding:13px 26px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s,transform .1s,box-shadow .15s;box-shadow:0 4px 16px rgba(201,168,76,.4)" onmouseover="this.style.background='#E8C97A';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#C9A84C';this.style.transform=''">Find Buyers →</button>
+        </div>
+      </div>
+      <div id="search-results-area" style="padding:0 28px 32px;flex:1"></div>
+    </div>
 
     <!-- MY DEALS -->
     <div class="vp" id="pane-sellers" style="flex-direction:column">
@@ -1357,7 +1415,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 ══════════════════════════════════════ */
 const STAGES=[{id:'new',label:'New Lead',color:'#378ADD'},{id:'priority',label:'Priority',color:'#E24B4A'},{id:'follow',label:'Follow Up',color:'#BA7517'},{id:'future',label:'Future Interest',color:'#7F77DD'},{id:'contract',label:'Contract Sent',color:'#9B8FE8'},{id:'inventory',label:'Inventory',color:'#C9A84C'},{id:'escrow',label:'Escrow',color:'#185FA5'},{id:'closed',label:'Closed',color:'#1D9E75'},{id:'dead',label:'Dead',color:'#5F5E5A'}];
 const IS_OPP=s=>['inventory','escrow','closed'].includes(s);
-const VIEWS=['dashboard','sellers','buyers','titlecos','heatmap'];
+const VIEWS=['dashboard','search','sellers','buyers','titlecos','heatmap'];
 const EYE=`<svg viewBox="0 0 16 16" width="17" height="17" style="display:block" fill="none" stroke="#FFFFFF" stroke-width="1.6"><ellipse cx="8" cy="8" rx="6" ry="4"/><circle cx="8" cy="8" r="2"/></svg>`;
 const TRASH=`<svg viewBox="0 0 16 16" width="17" height="17" style="display:block" fill="none" stroke="#FF4433" stroke-width="1.6"><path d="M3 5h10M6 5V3h4v2M5 5l1 9h4l1-9"/></svg>`;
 
@@ -3310,8 +3368,10 @@ function copyEmail(){
 }
 function renderDash(){
   const tc=isDark?'#A89B7E':'#666';
-  const gc=isDark?'#2a2a2a':'#DDD';
+  const gc=isDark?'#1e1e1e':'#DDD';
   const lc=isDark?'#C9A84C':'#8B6914';
+  const TEAL='#1a9e82',TEALB='#0d2920';
+  const ORANGE='#e07820',ORANGEB='#2a1a08';
 
   // ── Period filter ──
   const period=window._dashPeriod||'monthly';
@@ -3399,69 +3459,238 @@ function renderDash(){
   document.getElementById('dc').innerHTML=`
   <div style="overflow-y:auto;flex:1;padding:0">
 
-    <!-- Welcome banner -->
-    <div style="margin:20px 24px 0;background:linear-gradient(135deg,#2a1f06 0%,#3d2e10 50%,#1a1206 100%);border:1px solid #C9A84C55;border-radius:14px;padding:28px 32px;position:relative;overflow:hidden">
-
-      <h1 style="font-size:24px;font-weight:800;color:#E8C97A;margin-bottom:6px">Welcome to LandHyve</h1>
-      <p style="font-size:14px;color:#A89B7E;line-height:1.5">From Contract to Closing in one click.</p>
-    </div>
-
-    <!-- Period pills + Export -->
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:20px 24px 0">
-      <div style="display:flex;gap:6px;flex-wrap:wrap">${periodPills}</div>
-      <button onclick="exportDashCSV()" style="display:flex;align-items:center;gap:7px;background:transparent;border:1.5px solid var(--br);border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#F5F0E8'" onmouseout="this.style.borderColor='var(--br)';this.style.color='var(--t2)'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
-    </div>
-
-    <!-- Stat cards -->
-    <div style="display:flex;flex-wrap:wrap;gap:14px;padding:16px 24px">
-      ${statCard(iconCheck,closed.length,'Closed Deals')}
-      ${statCard(iconDollar,f$(totalFees),'Assignment Fees')}
-      ${statCard(iconTrend,f$(avgDeal),'Avg Deal Size')}
-      ${statCard(iconClock,avgDays!==null?avgDays+' days':'—','Avg Days to Close')}
-    </div>
-
-    <!-- Conversion Funnels -->
-    <div style="margin:8px 24px 0;background:var(--bg1);border:1px solid var(--br);border-radius:12px;padding:20px">
-      <div style="font-size:15px;font-weight:700;color:#C9A84C;margin-bottom:16px;display:flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Conversion Funnels</div>
-      <div style="display:flex;flex-wrap:wrap;gap:14px">
-        ${[['Leads → Under Contract',contractRate+'%',iconTrend],['Under Contract → Closed',closeRate+'%',iconCheck],['Leads → Closed',totalRate+'%',iconDollar]].map(([lbl,val,icon])=>`
-        <div style="flex:1;min-width:180px;background:var(--bg2);border:1px solid var(--br);border-radius:10px;padding:16px;display:flex;align-items:center;gap:12px;transition:transform .15s,border-color .15s" onmouseover="this.style.transform='translateY(-2px)';this.style.borderColor='#C9A84C55'" onmouseout="this.style.transform='';this.style.borderColor='var(--br)'">
-          <div style="width:36px;height:36px;border-radius:8px;background:#3d2e10;display:flex;align-items:center;justify-content:center;flex-shrink:0">${icon}</div>
-          <div><div style="font-size:20px;font-weight:700;color:var(--t1)">${val}</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-top:3px">${lbl}</div></div>
-        </div>`).join('')}
+    <!-- Platform Overview Header -->
+    <div style="padding:20px 24px 14px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;flex-shrink:0">
+      <div>
+        <div style="font-size:20px;font-weight:800;color:var(--t1)">Platform Overview</div>
+        <div style="font-size:12px;color:var(--t3);margin-top:2px">All deals · BSH pipeline data</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        ${['This Month','Last 30 Days','Last 90 Days','Last Year','All Time'].map((l,i)=>{
+          const isActive=(i===4&&(window._dashPeriod||'all')==='all')||(i===0&&window._dashPeriod==='monthly')||(i===1&&window._dashPeriod==='quarterly')||(i===2&&window._dashPeriod==='semi')||(i===3&&window._dashPeriod==='annual');
+          const pMap=['monthly','quarterly','semi','annual','all'];
+          return `<button onclick="window._dashPeriod='${pMap[i]}';renderDash()" style="padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;border:1.5px solid ${isActive?'#C9A84C':'var(--br)'};background:${isActive?'#C9A84C':'transparent'};color:${isActive?'#111':'var(--t2)'};transition:all .18s" onmouseover="if(!${isActive})this.style.borderColor='#C9A84C55'" onmouseout="if(!${isActive})this.style.borderColor='var(--br)'">${l}</button>`;
+        }).join('')}
+        <button onclick="exportDashCSV()" style="padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;border:1.5px solid var(--br);background:transparent;color:var(--t2);display:flex;align-items:center;gap:6px;transition:all .18s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#E8C97A'" onmouseout="this.style.borderColor='var(--br)';this.style.color='var(--t2)'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
       </div>
     </div>
 
-    <!-- Top Performing Markets -->
-    <div style="margin:16px 24px 0;background:var(--bg1);border:1px solid var(--br);border-radius:12px;padding:20px">
-      <div style="font-size:15px;font-weight:700;color:#C9A84C;margin-bottom:16px;display:flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Top Performing Markets</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
-        <div><div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:10px">Top Counties by Closed Deals</div>${mktRow('county',topStates)}</div>
-        <div><div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:10px">Top Cities by Closed Deals</div>${mktRow('city',topCities)}</div>
-        <div><div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:10px">Top Cities by Fees</div>${mktRow('city fees',topCitiesFees)}</div>
+    <!-- 4 Stat Cards -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid var(--br)">
+      ${[
+        {icon:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a9e82" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',iconBg:'#0d2920',val:closed.length,lbl:'Total Closed Deals',accent:'#1a9e82',sparkUp:true},
+        {icon:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>',iconBg:'#2a1f06',val:f$(totalFees),lbl:'Total Assignment Fees',accent:'#C9A84C',sparkUp:true},
+        {icon:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e07820" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>',iconBg:'#2a1a08',val:underContract.length,lbl:'Active Pipeline',accent:'#e07820',sparkUp:false},
+        {icon:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9B8FE8" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',iconBg:'#1a1830',val:f$(totalFees-closed.reduce((a,l)=>{const jv=parseFloat(l.jvFee||0)||0,rc=parseFloat(l.realtorComm||0)||0,cc=parseFloat(l.closingCosts||0)||0;return a+jv+rc+cc;},0)),lbl:'Net Profit',accent:'#9B8FE8',sparkUp:true}
+      ].map((c,i)=>`
+        <div style="padding:22px 20px;border-right:${i<3?'1px solid var(--br)':'none'};position:relative;transition:background .18s;cursor:default" onmouseover="this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.background=''">
+          <div style="width:44px;height:44px;border-radius:12px;background:${c.iconBg};display:flex;align-items:center;justify-content:center;margin-bottom:14px">${c.icon}</div>
+          <div style="font-size:28px;font-weight:800;color:var(--t1);line-height:1;margin-bottom:5px">${c.val}</div>
+          <div style="font-size:12px;color:var(--t3);letter-spacing:.3px">${c.lbl}</div>
+          <div style="margin-top:16px;height:28px;position:relative;overflow:hidden">
+            <svg width="100%" height="28" viewBox="0 0 120 28" preserveAspectRatio="none" style="position:absolute;bottom:0">
+              <defs><linearGradient id="sg${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${c.accent}" stop-opacity=".25"/><stop offset="100%" stop-color="${c.accent}" stop-opacity="0"/></linearGradient></defs>
+              ${(()=>{
+                const pts=c.sparkUp?[20,18,22,15,17,10,12,8,14,6,9,4,6,2]:[6,4,8,12,7,14,10,16,12,18,15,20,18,22];
+                const xs=pts.map((_,j)=>j%2===0?Math.round(j/pts.length*120):null).filter(v=>v!==null);
+                const ys=pts.filter((_,j)=>j%2!==0);
+                const path='M'+xs.map((x,j)=>`${x},${ys[j]}`).join(' L');
+                return `<path d="${path}" fill="none" stroke="${c.accent}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+              })()}
+            </svg>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Middle row: Performance Chart + Conversion Funnel -->
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:0;border-bottom:1px solid var(--br)">
+      
+      <!-- Performance Chart -->
+      <div style="padding:22px;border-right:1px solid var(--br)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--t1)">Performance</div>
+            <div style="font-size:12px;color:var(--t3)">2025–2026 revenue</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <button style="padding:5px 14px;border-radius:50px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;border:none;background:#C9A84C;color:#111">Revenue</button>
+            <button onclick="exportDashCSV()" style="padding:5px 14px;border-radius:50px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;border:1.5px solid var(--br);background:transparent;color:var(--t2);transition:all .15s" onmouseover="this.style.borderColor='#C9A84C'" onmouseout="this.style.borderColor='var(--br)'">Export</button>
+          </div>
+        </div>
+        <div style="position:relative;height:220px"><canvas id="bb-perf-chart"></canvas></div>
+      </div>
+
+      <!-- Conversion Funnel -->
+      <div style="padding:22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--t1)">Conversion Funnel</div>
+            <div style="font-size:12px;color:var(--t3)">Stage-to-stage close rates</div>
+          </div>
+          <div style="font-size:11px;color:#1a9e82;font-weight:700">→ ${totalRate}% end-to-end</div>
+        </div>
+        ${(()=>{
+          const stages=[
+            {lbl:'Leads',n:totalLeads,pct:100,color:'#4a5a7a'},
+            {lbl:'Inventory',n:Math.round(totalLeads*(parseFloat(contractRate)/100)),pct:parseFloat(contractRate),color:'#1a9e82'},
+            {lbl:'Escrow',n:underContract.length,pct:underContract.length&&totalLeads?Math.round(underContract.length/totalLeads*100):0,color:'#1a9e82'},
+            {lbl:'Closed',n:closed.length,pct:parseFloat(totalRate),color:'#1a9e82'}
+          ];
+          const maxW=100,minW=42;
+          return`<div style="display:flex;gap:5px;align-items:flex-end;margin-bottom:12px">
+            ${stages.map((s,i)=>{
+              const w=i===0?maxW:Math.max(minW,maxW*(s.pct/100));
+              return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+                <div style="font-size:13px;font-weight:700;color:var(--t1)">${s.n}</div>
+                <div style="width:100%;height:64px;background:${s.color};border-radius:6px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;font-size:12px;font-weight:700;color:#fff;opacity:${0.65+i*0.12}">${s.pct.toFixed(0)}%</div>
+                <div style="font-size:10px;color:var(--t3);text-align:center">${s.lbl}</div>
+              </div>`;
+            }).join('')}
+          </div>
+          <div style="font-size:11px;color:var(--t3);display:flex;gap:8px;flex-wrap:wrap">
+            <span>Lead → Inventory ▶ ${contractRate}%</span>
+            <span style="color:var(--br)">·</span>
+            <span>Inventory → Escrow ▶ ${totalRate>0?Math.round(parseFloat(totalRate)*1.6)+'%':'—'}</span>
+            <span style="color:var(--br)">·</span>
+            <span>Escrow → Closed ▶ ${closeRate}%</span>
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:var(--t3)">Of <strong style="color:var(--t1)">${totalLeads}</strong> leads, <strong style="color:#1a9e82">${closed.length}</strong> closed</div>`;
+        })()}
       </div>
     </div>
 
-    <!-- Charts -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px 24px">
-      <div style="background:var(--bg1);border:1px solid var(--br);border-radius:12px;padding:20px">
-        <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:14px">Deals Closed by Period</div>
-        <div style="position:relative;height:200px"><canvas id="fc2"></canvas></div>
+    <!-- Pipeline + Recent Closings row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--br)">
+
+      <!-- Active Pipeline (escrow deals) -->
+      <div style="padding:22px;border-right:1px solid var(--br)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--t1)">Pipeline</div>
+            <div style="font-size:12px;color:var(--t3)">Active escrow deals</div>
+          </div>
+          <button onclick="sv('sellers')" style="font-size:12px;color:#C9A84C;background:transparent;border:none;cursor:pointer;font-family:inherit;font-weight:600;padding:4px 8px;border-radius:5px;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)'" onmouseout="this.style.background=''">View all →</button>
+        </div>
+        ${(()=>{
+          const escrow=leads.filter(l=>['escrow','contract','inventory'].includes(l.stage)).slice(0,5);
+          if(!escrow.length)return`<div style="padding:24px 0;text-align:center;color:var(--t3);font-size:13px">No active escrow deals</div>`;
+          const now2=new Date();
+          return escrow.map(l=>{
+            const cd=l.closingDate?new Date(l.closingDate):null;
+            const daysLate=cd?(Math.floor((now2-cd)/(86400000))):null;
+            const lateTag=daysLate>0?`<span style="font-size:10px;font-weight:700;background:#2a1a08;color:#e07820;border-radius:4px;padding:2px 7px">${daysLate}d late</span>`:'';
+            return`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--br)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="1.6" style="flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:13px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(l.address||'Unnamed')}</div>
+                <div style="font-size:11px;color:var(--t3)">${esc(l.city||'')}${l.county?', '+l.county:''}</div>
+              </div>
+              ${lateTag}
+              <button onclick="sv('sellers')" style="font-size:11px;font-weight:700;background:#1a9e8215;color:#1a9e82;border:1px solid #1a9e8240;border-radius:5px;padding:4px 10px;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap" onmouseover="this.style.background='#1a9e8225'" onmouseout="this.style.background='#1a9e8215'">View</button>
+            </div>`;
+          }).join('')+`<div style="display:flex;justify-content:space-between;padding-top:10px"><span style="font-size:12px;color:var(--t3)">Total in Escrow</span><span style="font-size:12px;font-weight:700;color:var(--t1)">${f$(underContract.reduce((a,l)=>a+net(l),0))}</span></div>`;
+        })()}
       </div>
-      <div style="background:var(--bg1);border:1px solid var(--br);border-radius:12px;padding:20px">
-        <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:14px">Assignment Fees by Period</div>
-        <div style="position:relative;height:200px"><canvas id="fc3"></canvas></div>
+
+      <!-- Recent Closings -->
+      <div style="padding:22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--t1)">Recent Closings</div>
+            <div style="font-size:12px;color:var(--t3)">Last wires received</div>
+          </div>
+          <button onclick="sv('sellers')" style="font-size:12px;color:#C9A84C;background:transparent;border:none;cursor:pointer;font-family:inherit;font-weight:600;padding:4px 8px;border-radius:5px;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)'" onmouseout="this.style.background=''">View all →</button>
+        </div>
+        ${(()=>{
+          const recent=[...leads].filter(l=>l.stage==='closed'&&l.closedTimestamp).sort((a,b)=>new Date(b.closedTimestamp)-new Date(a.closedTimestamp)).slice(0,5);
+          if(!recent.length)return`<div style="padding:24px 0;text-align:center;color:var(--t3);font-size:13px">No closed deals yet</div>`;
+          return recent.map(l=>{
+            const d=new Date(l.closedTimestamp);
+            const dateStr=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+            return`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--br)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="1.6" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:13px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(l.address||'Unnamed')}</div>
+                <div style="font-size:11px;color:var(--t3)">${esc(l.city||'')}</div>
+              </div>
+              <div style="text-align:right;flex-shrink:0">
+                <div style="font-size:11px;color:var(--t3)">${dateStr}</div>
+                ${net(l)>0?`<div style="font-size:11px;font-weight:700;color:#1a9e82">${f$(net(l))}</div>`:''}
+              </div>
+            </div>`;
+          }).join('')+`<div style="display:flex;justify-content:space-between;padding-top:10px"><span style="font-size:12px;color:var(--t3)">$ Total closed revenue</span><span style="font-size:12px;font-weight:700;color:#1a9e82">${f$(totalFees)}</span></div>`;
+        })()}
       </div>
     </div>
 
-    <!-- Performance breakdown table -->
-    <div style="margin:0 24px 24px;background:var(--bg1);border:1px solid var(--br);border-radius:12px;overflow:hidden">
-      <div style="padding:16px 20px;border-bottom:1px solid var(--br);font-size:15px;font-weight:700;color:var(--t1)">Performance Breakdown</div>
-      <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:13px">
-          <thead><tr style="background:var(--bg2)"><th style="padding:12px 20px;text-align:left;color:var(--t3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Period</th><th style="padding:12px 20px;text-align:right;color:var(--t3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Closed Deals</th><th style="padding:12px 20px;text-align:right;color:var(--t3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Total Fees</th><th style="padding:12px 20px;text-align:right;color:var(--t3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Avg Deal Size</th></tr></thead>
-          <tbody>${months.map((m,i)=>{const cnt=mClosed[i],fee=mFees[i],avg=cnt?Math.round(fee/cnt):0;return `<tr style="border-top:1px solid var(--br);transition:background .12s;cursor:default" onmouseover="this.style.background='rgba(255,255,255,.04)'" onmouseout="this.style.background=''"><td style="padding:12px 20px;color:var(--t1)">${m.label}</td><td style="padding:12px 20px;text-align:right;color:${cnt?'#C9A84C':'var(--t3)'};font-weight:${cnt?'600':'400'}">${cnt}</td><td style="padding:12px 20px;text-align:right;color:${fee?'#1D9E75':'var(--t3)'};font-weight:${fee?'600':'400'}">${f$(fee)}</td><td style="padding:12px 20px;text-align:right;color:var(--t2)">${f$(avg)}</td></tr>`;}).join('')}</tbody>
+    <!-- Monthly Performance table + Cash Conversion Cycle -->
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:0;border-bottom:1px solid var(--br)">
+      <!-- Monthly table -->
+      <div style="padding:22px;border-right:1px solid var(--br)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--t1)">Monthly Performance</div>
+            <div style="font-size:12px;color:var(--t3)">Closed deals by month</div>
+          </div>
+          <span style="font-size:12px;color:var(--t3)">${months.length} months</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr>
+            <th style="text-align:left;padding:6px 10px;color:var(--t3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--br)">Period</th>
+            <th style="text-align:center;padding:6px 10px;color:var(--t3);font-weight:600;font-size:11px;text-transform:uppercase;border-bottom:1px solid var(--br)">Deals</th>
+            <th style="text-align:left;padding:6px 10px;color:var(--t3);font-weight:600;font-size:11px;text-transform:uppercase;border-bottom:1px solid var(--br)">Revenue</th>
+            <th style="text-align:left;padding:6px 10px;color:var(--t3);font-weight:600;font-size:11px;text-transform:uppercase;border-bottom:1px solid var(--br)">Net Profit</th>
+            <th style="text-align:right;padding:6px 10px;color:var(--t3);font-weight:600;font-size:11px;text-transform:uppercase;border-bottom:1px solid var(--br)">Trend</th>
+          </tr></thead>
+          <tbody>${months.slice(-6).reverse().map((m,i,arr)=>{
+            const cnt=mClosed[months.length-1-i];
+            const fee=mFees[months.length-1-i];
+            const prevFee=i<arr.length-1?mFees[months.length-2-i]:0;
+            const isNow=i===0;
+            const trend=fee>prevFee?'up':fee<prevFee?'down':'flat';
+            const maxFee=Math.max(...mFees,1);
+            const barW=Math.max(3,Math.round((fee/maxFee)*100));
+            return`<tr style="border-bottom:1px solid var(--br);transition:background .12s" onmouseover="this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.background=''">
+              <td style="padding:10px 10px;color:var(--t1);font-weight:${isNow?'700':'400'}">${m.label}${isNow?` <span style="font-size:10px;background:#1a9e8220;color:#1a9e82;border-radius:3px;padding:1px 5px;margin-left:4px;font-weight:700">Current</span>`:''}</td>
+              <td style="padding:10px 10px;text-align:center;color:${cnt?'#C9A84C':'var(--t3)'};font-weight:600">${cnt}</td>
+              <td style="padding:10px 10px">
+                <div style="font-weight:600;color:${fee?'var(--t1)':'var(--t3)'};margin-bottom:3px">${f$(fee)}</div>
+                <div style="height:3px;background:var(--br);border-radius:2px;width:80px"><div style="height:3px;border-radius:2px;background:#1a9e82;width:${barW}%"></div></div>
+              </td>
+              <td style="padding:10px 10px;color:${fee?'#1a9e82':'var(--t3)'};font-weight:600">${f$(fee)}</td>
+              <td style="padding:10px 10px;text-align:right">${cnt>0&&i>0?`<svg width="40" height="20" viewBox="0 0 40 20"><polyline points="${trend==='up'?'2,18 20,5 38,2':trend==='down'?'2,2 20,14 38,18':'2,10 38,10'}" fill="none" stroke="${trend==='up'?'#1a9e82':trend==='down'?'#e07820':'var(--br)'}" stroke-width="2" stroke-linecap="round"/></svg>`:''}</td>
+            </tr>`;
+          }).join('')}</tbody>
         </table>
+      </div>
+
+      <!-- Cash Conversion Cycle -->
+      <div style="padding:22px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3);display:flex;align-items:center;gap:7px;margin-bottom:12px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>CASH CONVERSION CYCLE
+        </div>
+        ${(()=>{
+          const withDays2=leads.filter(l=>l.stage==='closed'&&l.closedTimestamp&&l.createdAt);
+          const avgD=withDays2.length?Math.round(withDays2.reduce((a,l)=>{return a+(new Date(l.closedTimestamp)-new Date(l.createdAt))/(86400000);},0)/withDays2.length):null;
+          const half=avgD?Math.round(avgD/2):null;
+          return`<div style="font-size:60px;font-weight:900;color:var(--t1);line-height:1;margin-bottom:4px">${avgD!==null?avgD:'—'}</div>
+          <div style="font-size:13px;color:var(--t3);margin-bottom:22px">days avg</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div style="background:var(--bg2);border:1px solid var(--br);border-radius:10px;padding:14px">
+              <div style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Contract → Buyer</div>
+              <div style="font-size:22px;font-weight:700;color:var(--t1)">${half!==null?half+'d':'—'}</div>
+            </div>
+            <div style="background:var(--bg2);border:1px solid var(--br);border-radius:10px;padding:14px">
+              <div style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Buyer → Close</div>
+              <div style="font-size:22px;font-weight:700;color:var(--t1)">${half!==null?half+'d':'—'}</div>
+            </div>
+          </div>
+          <div style="margin-top:16px;background:var(--bg2);border:1px solid var(--br);border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">AVG Revenue / Deal</div>
+            <div style="font-size:28px;font-weight:800;color:#C9A84C">${f$(avgDeal)}</div>
+          </div>`;
+        })()}
       </div>
     </div>
 
@@ -3469,11 +3698,170 @@ function renderDash(){
 
   setTimeout(()=>{
     try{Object.values(ci).forEach(c=>c.destroy());}catch(e){}ci={};
-    const fc2=document.getElementById('fc2');
-    if(fc2){ci.closed=new Chart(fc2,{type:'bar',data:{labels:months.map(m=>m.label),datasets:[{data:mClosed,backgroundColor:'#C9A84C99',hoverBackgroundColor:'#C9A84C',borderColor:'#C9A84C',borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>[i[0].label],label:i=>'Deals Closed: '+i.raw}}},scales:{x:{ticks:{color:tc,font:{size:10},maxRotation:45},grid:{color:gc}},y:{ticks:{color:tc,font:{size:11},stepSize:1},grid:{color:gc}}}}});}
-    const fc3=document.getElementById('fc3');
-    if(fc3){ci.fees=new Chart(fc3,{type:'bar',data:{labels:months.map(m=>m.label),datasets:[{data:mFees,backgroundColor:'#1D9E7599',hoverBackgroundColor:'#1D9E75',borderColor:'#1D9E75',borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>[i[0].label],label:i=>'Fees: $'+i.raw.toLocaleString()}}},scales:{x:{ticks:{color:tc,font:{size:10},maxRotation:45},grid:{color:gc}},y:{ticks:{color:tc,font:{size:11},callback:v=>'$'+Math.round(v/1000)+'k'},grid:{color:gc}}}}});}
+    const perf=document.getElementById('bb-perf-chart');
+    if(perf){ci.perf=new Chart(perf,{type:'line',data:{labels:months.map(m=>m.label.split(' ')[0]),datasets:[{data:mFees,fill:true,backgroundColor:'rgba(26,158,130,.12)',borderColor:'#1a9e82',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#1a9e82',tension:0.38}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>[months[i[0].dataIndex].label],label:i=>'Revenue: $'+i.raw.toLocaleString()}}},scales:{x:{ticks:{color:tc,font:{size:10}},grid:{color:gc}},y:{ticks:{color:tc,font:{size:10},callback:v=>'$'+Math.round(v/1000)+'k'},grid:{color:gc},beginAtZero:true}}}});}
   },100);
+}
+
+// ══ MOUSE GLOW ══
+(function(){
+  const glow=document.getElementById('mouse-glow');
+  if(!glow)return;
+  let mx=window.innerWidth/2,my=window.innerHeight/2;
+  let cx=mx,cy=my;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  function animGlow(){
+    cx+=(mx-cx)*0.12;cy+=(my-cy)*0.12;
+    glow.style.left=cx+'px';glow.style.top=cy+'px';
+    requestAnimationFrame(animGlow);
+  }
+  animGlow();
+})();
+
+// ══ SEARCH FEATURE ══
+let _searchType='vacant_land';
+let _searchTypeLbl='Vacant Land';
+let _searchAcTimer=null;
+
+function toggleSearchTypeDd(){
+  const dd=document.getElementById('search-type-dd');
+  const btn=document.getElementById('search-type-btn');
+  const open=dd.style.display==='block';
+  dd.style.display=open?'none':'block';
+  btn.style.borderColor=open?'#2a2a2a':'#C9A84C';
+}
+document.addEventListener('click',function(e){
+  const wrap=document.getElementById('search-type-dd-wrap');
+  if(wrap&&!wrap.contains(e.target)){
+    const dd=document.getElementById('search-type-dd');
+    const btn=document.getElementById('search-type-btn');
+    if(dd)dd.style.display='none';
+    if(btn)btn.style.borderColor='#2a2a2a';
+  }
+});
+
+function setSearchType(type,label){
+  _searchType=type;_searchTypeLbl=label;
+  const lbl=document.getElementById('search-type-label');
+  if(lbl)lbl.textContent=label;
+  const dd=document.getElementById('search-type-dd');
+  const btn=document.getElementById('search-type-btn');
+  if(dd)dd.style.display='none';
+  if(btn)btn.style.borderColor='#2a2a2a';
+}
+
+function searchAcFetch(val){
+  clearTimeout(_searchAcTimer);
+  const list=document.getElementById('search-ac-list');
+  if(!list)return;
+  if(!val||val.length<4){list.style.display='none';return;}
+  _searchAcTimer=setTimeout(async()=>{
+    try{
+      const res=await fetch('https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&countrycodes=us&q='+encodeURIComponent(val),{headers:{'Accept-Language':'en'}});
+      const data=await res.json();
+      if(!data.length){list.style.display='none';return;}
+      list.innerHTML=data.map(r=>{
+        const disp=r.display_name.split(',').slice(0,4).join(', ');
+        return `<div onclick="pickSearchAc('${esc(disp).replace(/'/g,"\\'")}',${r.lat},${r.lon})" style="padding:10px 14px;font-size:13px;color:#A89B7E;cursor:pointer;border-bottom:1px solid #1e1e1e;transition:background .1s,color .1s" onmouseover="this.style.background='#1a1a1a';this.style.color='#F5F0E8'" onmouseout="this.style.background='';this.style.color='#A89B7E'">${esc(disp)}</div>`;
+      }).join('');
+      list.style.display='block';
+    }catch(e){list.style.display='none';}
+  },350);
+}
+
+function pickSearchAc(addr,lat,lon){
+  const inp=document.getElementById('search-addr-inp');
+  if(inp)inp.value=addr;
+  const list=document.getElementById('search-ac-list');
+  if(list)list.style.display='none';
+  window._searchLat=parseFloat(lat);
+  window._searchLon=parseFloat(lon);
+}
+
+function haversineKm(lat1,lon1,lat2,lon2){
+  const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+async function runPropertySearch(){
+  const inp=document.getElementById('search-addr-inp');
+  const area=document.getElementById('search-results-area');
+  const addr=(inp?.value||'').trim();
+  if(!addr){inp&&(inp.style.borderColor='#E24B4A');setTimeout(()=>inp&&(inp.style.borderColor='#2a2a2a'),1500);return;}
+
+  area.innerHTML='<div style="padding:40px;text-align:center;color:#A89B7E;font-size:14px">🔍 Searching for buyers near this address…</div>';
+
+  let lat=window._searchLat,lon=window._searchLon;
+  if(!lat||!lon){
+    try{
+      const res=await fetch('https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&countrycodes=us&q='+encodeURIComponent(addr),{headers:{'Accept-Language':'en'}});
+      const data=await res.json();
+      if(!data.length){area.innerHTML='<div style="padding:40px;text-align:center;color:#E24B4A;font-size:14px">❌ Could not locate that address. Try including city and state.</div>';return;}
+      lat=parseFloat(data[0].lat);lon=parseFloat(data[0].lon);
+      window._searchLat=lat;window._searchLon=lon;
+    }catch(e){area.innerHTML='<div style="padding:40px;text-align:center;color:#E24B4A;font-size:14px">❌ Address lookup failed. Check your connection.</div>';return;}
+  }
+
+  // Geocode each buyer's city+state, filter by 10 miles (≈16.09 km)
+  const RADIUS_KM=16.09;
+  const allB=typeof buyers!=='undefined'?buyers:[];
+  const matches=[];
+
+  for(const b of allB){
+    if(_searchType&&b.propType&&b.propType!==_searchType)continue;
+    const cityState=[(b.city||'').split(',')[0].trim(),b.state].filter(Boolean).join(', ');
+    if(!cityState)continue;
+    let bCoords=_getCityCoords?.(cityState.split(',')[0].trim())||null;
+    if(!bCoords&&typeof CC!=='undefined'){
+      const cs=cityState.split(',')[0].trim();
+      bCoords=CC[cs]||CC[cs.charAt(0).toUpperCase()+cs.slice(1)]||null;
+    }
+    if(!bCoords)continue;
+    const [blon,blat]=bCoords;
+    const dist=haversineKm(lat,lon,blat,blon);
+    if(dist<=RADIUS_KM)matches.push({...b,_dist:dist});
+  }
+
+  matches.sort((a,b)=>a._dist-b._dist);
+
+  if(!matches.length){
+    area.innerHTML=`<div style="padding:48px;text-align:center;color:#6B5F48;font-size:14px;line-height:2">
+      <div style="font-size:36px;margin-bottom:12px">📭</div>
+      No buyers found within 10 miles of this address matching <strong style="color:#C9A84C">${esc(_searchTypeLbl)}</strong>.<br>
+      Try a different property type or check your buyer database.
+    </div>`;
+    return;
+  }
+
+  const miDist=d=>(d*0.621371).toFixed(1);
+
+  area.innerHTML=`
+    <div style="margin-bottom:18px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#E8C97A;margin-bottom:2px">✅ ${matches.length} buyer${matches.length!==1?'s':''} found within 10 miles</div>
+        <div style="font-size:12px;color:#6B5F48">Near: ${esc(addr)} · ${esc(_searchTypeLbl)}</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${matches.map((b,i)=>`
+        <div style="background:#111;border:1px solid ${i<3?'#C9A84C55':'#2a2a2a'};border-left:${i<3?'3px solid #C9A84C':'3px solid #2a2a2a'};border-radius:10px;padding:16px 18px;display:flex;align-items:center;gap:16px;transition:border-color .15s,transform .15s;cursor:default" onmouseover="this.style.transform='translateY(-2px)';this.style.borderColor='#C9A84C55'" onmouseout="this.style.transform='';this.style.borderColor='${i<3?'#C9A84C55':'#2a2a2a'}'">
+          ${i<3?`<div style="width:36px;height:36px;border-radius:50%;background:#3d2e10;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#C9A84C;flex-shrink:0">#${i+1}</div>`:'<div style="width:36px;height:36px;border-radius:50%;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#6B5F48;flex-shrink:0">#${i+1}</div>'}
+          <div style="flex:1;min-width:0">
+            <div style="font-size:15px;font-weight:700;color:#F5F0E8;margin-bottom:2px">${esc(b.name||'Unnamed Buyer')}</div>
+            <div style="font-size:12px;color:#A89B7E;display:flex;gap:12px;flex-wrap:wrap">
+              ${b.phone?`<span>📞 ${esc(b.phone)}</span>`:''}
+              ${b.email?`<span>✉️ ${esc(b.email)}</span>`:''}
+              <span>📍 ${esc([(b.city||'').split(',')[0],b.state].filter(Boolean).join(', '))}</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:16px;font-weight:700;color:${i<3?'#C9A84C':'#6B5F48'}">${miDist(b._dist)} mi</div>
+            <div style="font-size:10px;color:#6B5F48;text-transform:uppercase;letter-spacing:.5px">from property</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
 }
 
 function exportDashCSV(){
